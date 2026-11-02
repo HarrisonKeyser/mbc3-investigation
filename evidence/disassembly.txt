@@ -1971,3 +1971,420 @@ S. End of a programmed session 0x821e9168: per-session "combo used" bits (@+0x36
 821e95d0: 7d6b4a14  add      r11, r11, r9
 821e95d4: 7d4b5214  add      r10, r11, r10
 821e95d8: 7ecae1ae  stbx     r22, r10, r28
+
+====================================================================================================
+T. Calendar logic 0x821eaa48: TodaySessionState from the day records (state byte +0xc of each 18-byte record)
+====================================================================================================
+# Record states: 0 nothing planned, 1 missed, 2 done, 3 moved to an earlier day, 4 missed-and-caught-up, 5 planned, 6 played early (brought forward), 7 catching up a missed one.
+# Past planned (5) records become missed (1). Then by today's record state:
+#   5 -> ProgramedSession; 6 -> AdvancedSession; 7 -> MissedSession;
+#   0 (nothing planned): latest missed session < 7 days old -> it moves to today (Missed); else next record < 7 days ahead -> moves to today (Advanced); else NoSession.
+#   2 (done today): NoSession if a later record exists, else ProgramEnd + UnlockTrophy(0x1e = ID 30 "Your efforts will pay off").
+# TodaySessionState values: 0 Programed, 1 Missed, 2 Advanced, 3 NoSession, 4 ProgramEnd, 5 NoProgram.
+
+# --- switch on today's record state
+821eaca0: 8973000c  lbz      r11, 0xc(r19)
+821eaca4: 3ba00012  li       r29, 0x12
+821eaca8: 2b0b0007  cmplwi   cr6, r11, 7
+821eacac: 419902f8  bgt      cr6, 0x821eafa4
+821eacb0: 7d6903a6  mtctr    r11
+821eacb4: 2f0b0000  cmpwi    cr6, r11, 0
+821eacb8: 405a02ec  bdzf     4*cr6+eq, 0x821eafa4
+821eacbc: 405a01bc  bdzf     4*cr6+eq, 0x821eae78
+821eacc0: 405a02e4  bdzf     4*cr6+eq, 0x821eafa4
+821eacc4: 405a02e0  bdzf     4*cr6+eq, 0x821eafa4
+821eacc8: 405a0180  bdzf     4*cr6+eq, 0x821eae48
+821eaccc: 405a0270  bdzf     4*cr6+eq, 0x821eaf3c
+821eacd0: 409a029c  bne      cr6, 0x821eaf6c
+
+# --- nothing planned: catch up a missed session from the last 7 days
+821eacd4: 2b120000  cmplwi   cr6, r18, 0
+821eacd8: 419a0098  beq      cr6, 0x821ead70
+821eacdc: 817b0004  lwz      r11, 4(r27)
+821eace0: 7f44d378  mr       r4, r26
+821eace4: 83cb0008  lwz      r30, 8(r11)
+821eace8: 7fc3f378  mr       r3, r30
+821eacec: 4bfdf645  bl       0x821ca330
+821eacf0: 2f030007  cmpwi    cr6, r3, 7
+821eacf4: 4098007c  bge      cr6, 0x821ead70
+821eacf8: 3d608216  lis      r11, -0x7dea
+821eacfc: 39400004  li       r10, 4
+821ead00: 39200007  li       r9, 7
+821ead04: 390b0814  addi     r8, r11, 0x814
+821ead08: 995e000c  stb      r10, 0xc(r30)
+821ead0c: 9933000c  stb      r9, 0xc(r19)
+821ead10: 38800001  li       r4, 1
+821ead14: 91010058  stw      r8, 0x58(r1)
+821ead18: 38610058  addi     r3, r1, 0x58
+821ead1c: 9281005c  stw      r20, 0x5c(r1)
+821ead20: 480e4f19  bl       0x822cfc38
+821ead24: 3ce00036  lis      r7, 0x36
+821ead28: 3cc08214  lis      r6, -0x7dec
+821ead2c: 9061005c  stw      r3, 0x5c(r1)
+821ead30: 60e5f4cc  ori      r5, r7, 0xf4cc
+821ead34: 38862e5c  addi     r4, r6, 0x2e5c
+821ead38: 90810058  stw      r4, 0x58(r1)
+821ead3c: 7c7f292e  stwx     r3, r31, r5
+
+# --- ... or bring the next planned session forward if it is less than 7 days away; copy its fitness/relaxation type and position
+821ead70: 7d7f9850  subf     r11, r31, r19
+821ead74: a1590000  lhz      r10, 0(r25)
+821ead78: 392bfbf6  addi     r9, r11, -0x40a
+821ead7c: 7d69ebd6  divw     r11, r9, r29
+821ead80: 396b0001  addi     r11, r11, 1
+821ead84: 7f0b5000  cmpw     cr6, r11, r10
+821ead88: 40980090  bge      cr6, 0x821eae18
+821ead8c: 556a1838  slwi     r10, r11, 3
+821ead90: 7f43d378  mr       r3, r26
+821ead94: 7d6b5214  add      r11, r11, r10
+821ead98: 556b083c  slwi     r11, r11, 1
+821ead9c: 7d6bfa14  add      r11, r11, r31
+821eada0: 3bcb040a  addi     r30, r11, 0x40a
+821eada4: 7fc4f378  mr       r4, r30
+821eada8: 4bfdf589  bl       0x821ca330
+821eadac: 2f030007  cmpwi    cr6, r3, 7
+821eadb0: 40980068  bge      cr6, 0x821eae18
+821eadb4: 3d608216  lis      r11, -0x7dea
+821eadb8: 39400003  li       r10, 3
+821eadbc: 39200006  li       r9, 6
+821eadc0: 390b0814  addi     r8, r11, 0x814
+821eadc4: 995e000c  stb      r10, 0xc(r30)
+821eadc8: 9933000c  stb      r9, 0xc(r19)
+821eadcc: 38800002  li       r4, 2
+821eadd0: 91010060  stw      r8, 0x60(r1)
+821eadd4: 38610060  addi     r3, r1, 0x60
+821eadd8: 92810064  stw      r20, 0x64(r1)
+821eaddc: 480e4e5d  bl       0x822cfc38
+821eade0: 3ce00036  lis      r7, 0x36
+821eade4: 3cc08214  lis      r6, -0x7dec
+821eade8: 90610064  stw      r3, 0x64(r1)
+821eadec: 60e5f4cc  ori      r5, r7, 0xf4cc
+821eadf0: 38862e5c  addi     r4, r6, 0x2e5c
+821eadf4: 90810060  stw      r4, 0x60(r1)
+821eadf8: 7c7f292e  stwx     r3, r31, r5
+821eadfc: 897e000d  lbz      r11, 0xd(r30)
+821eae00: 9973000d  stb      r11, 0xd(r19)
+821eae04: 895e000e  lbz      r10, 0xe(r30)
+821eae08: 9953000e  stb      r10, 0xe(r19)
+821eae0c: 893e000f  lbz      r9, 0xf(r30)
+821eae10: 9933000f  stb      r9, 0xf(r19)
+821eae14: 48000190  b        0x821eafa4
+
+# --- done today: NoSession, or ProgramEnd + achievement 30 when no later record exists
+821eae78: 7f44d378  mr       r4, r26
+821eae7c: 7e238b78  mr       r3, r17
+821eae80: 48009c11  bl       0x821f4a90
+821eae84: 217ffbf6  subfic   r11, r31, -0x40a
+821eae88: a1590000  lhz      r10, 0(r25)
+821eae8c: 7d235a14  add      r9, r3, r11
+821eae90: 7d69ebd6  divw     r11, r9, r29
+821eae94: 390b0001  addi     r8, r11, 1
+821eae98: 3d608216  lis      r11, -0x7dea
+821eae9c: 5507043e  clrlwi   r7, r8, 0x10
+821eaea0: 7f075040  cmplw    cr6, r7, r10
+821eaea4: 394b0814  addi     r10, r11, 0x814
+821eaea8: 4098002c  bge      cr6, 0x821eaed4
+821eaeac: 9281007c  stw      r20, 0x7c(r1)
+821eaeb0: 38800003  li       r4, 3
+821eaeb4: 91410078  stw      r10, 0x78(r1)
+821eaeb8: 38610078  addi     r3, r1, 0x78
+821eaebc: 480e4d7d  bl       0x822cfc38
+821eaec0: 3d008214  lis      r8, -0x7dec
+821eaec4: 9061007c  stw      r3, 0x7c(r1)
+821eaec8: 38c82e5c  addi     r6, r8, 0x2e5c
+821eaecc: 90c10078  stw      r6, 0x78(r1)
+821eaed0: 480000c8  b        0x821eaf98
+821eaed4: 92810084  stw      r20, 0x84(r1)
+821eaed8: 38800004  li       r4, 4
+821eaedc: 91410080  stw      r10, 0x80(r1)
+821eaee0: 38610080  addi     r3, r1, 0x80
+821eaee4: 480e4d55  bl       0x822cfc38
+821eaee8: 3d200036  lis      r9, 0x36
+821eaeec: 3d000036  lis      r8, 0x36
+821eaef0: 90610084  stw      r3, 0x84(r1)
+821eaef4: 6127f4cc  ori      r7, r9, 0xf4cc
+821eaef8: 6106f4d0  ori      r6, r8, 0xf4d0
+821eaefc: 3ca08214  lis      r5, -0x7dec
+821eaf00: 39652e5c  addi     r11, r5, 0x2e5c
+821eaf04: 7c7f392e  stwx     r3, r31, r7
+821eaf08: 7c9f302e  lwzx     r4, r31, r6
+821eaf0c: 2b0400fe  cmplwi   cr6, r4, 0xfe
+821eaf10: 91610080  stw      r11, 0x80(r1)
+821eaf14: 419a0090  beq      cr6, 0x821eafa4
+821eaf18: 3d6082e3  lis      r11, -0x7d1d
+821eaf1c: 38a0001e  li       r5, 0x1e
+821eaf20: 816be4c4  lwz      r11, -0x1b3c(r11)
+821eaf24: 806b0078  lwz      r3, 0x78(r11)
+821eaf28: 81430000  lwz      r10, 0(r3)
+821eaf2c: 812a0024  lwz      r9, 0x24(r10)
+821eaf30: 7d2903a6  mtctr    r9
+821eaf34: 4e800421  bctrl    
+
+====================================================================================================
+U. Session completed 0x821eb268: only planned sessions (TodaySessionState <= 2) are recorded and SAVED
+====================================================================================================
+# NoSession / ProgramEnd / NoProgram sessions return immediately: no record update, no SaveGame. (Lua: Options -> Volume ends in BCProfile:SaveGame().)
+821eb268: 7d8802a6  mflr     r12
+821eb26c: 9181fff8  stw      r12, -8(r1)
+821eb270: fbe1fff0  std      r31, -0x10(r1)
+821eb274: 9421ff90  stwu     r1, -0x70(r1)
+821eb278: 3d430037  addis    r10, r3, 0x37
+821eb27c: 7c7f1b78  mr       r31, r3
+821eb280: 394aa5a4  addi     r10, r10, -0x5a5c
+821eb284: 3c630037  addis    r3, r3, 0x37
+821eb288: 3863f4c8  addi     r3, r3, -0xb38
+821eb28c: 816a0000  lwz      r11, 0(r10)
+821eb290: 392b0001  addi     r9, r11, 1
+821eb294: 912a0000  stw      r9, 0(r10)
+821eb298: 480e4899  bl       0x822cfb30
+821eb29c: 2b030000  cmplwi   cr6, r3, 0
+821eb2a0: 419a0010  beq      cr6, 0x821eb2b0
+821eb2a4: 81630000  lwz      r11, 0(r3)
+821eb2a8: 2f0b0002  cmpwi    cr6, r11, 2
+821eb2ac: 41990098  bgt      cr6, 0x821eb344
+821eb2b0: 3c9f0037  addis    r4, r31, 0x37
+821eb2b4: 387f0408  addi     r3, r31, 0x408
+821eb2b8: 3884f0d0  addi     r4, r4, -0xf30
+821eb2bc: 480097d5  bl       0x821f4a90
+821eb2c0: 3d600036  lis      r11, 0x36
+821eb2c4: 3d400036  lis      r10, 0x36
+821eb2c8: 6169f4f8  ori      r9, r11, 0xf4f8
+821eb2cc: 6148f4fc  ori      r8, r10, 0xf4fc
+821eb2d0: 38e00002  li       r7, 2
+821eb2d4: 3cc00036  lis      r6, 0x36
+821eb2d8: 7c1f4c2e  lfsx     f0, r31, r9
+821eb2dc: 60cbf4d0  ori      r11, r6, 0xf4d0
+821eb2e0: fda0001e  fctiwz   f13, f0
+821eb2e4: d9a10050  stfd     f13, 0x50(r1)
+821eb2e8: 80a10054  lwz      r5, 0x54(r1)
+821eb2ec: b0a30008  sth      r5, 8(r3)
+821eb2f0: 7d9f442e  lfsx     f12, r31, r8
+821eb2f4: 98e3000c  stb      r7, 0xc(r3)
+821eb2f8: fd60601e  fctiwz   f11, f12
+821eb2fc: d9610050  stfd     f11, 0x50(r1)
+821eb300: 81410054  lwz      r10, 0x54(r1)
+821eb304: b143000a  sth      r10, 0xa(r3)
+821eb308: 7c9f582e  lwzx     r4, r31, r11
+821eb30c: 2b0400fe  cmplwi   cr6, r4, 0xfe
+821eb310: 419a0024  beq      cr6, 0x821eb334
+821eb314: 3d6082e3  lis      r11, -0x7d1d
+821eb318: 38a00002  li       r5, 2
+821eb31c: 816be4c4  lwz      r11, -0x1b3c(r11)
+821eb320: 806b0078  lwz      r3, 0x78(r11)
+821eb324: 81430000  lwz      r10, 0(r3)
+821eb328: 812a0024  lwz      r9, 0x24(r10)
+821eb32c: 7d2903a6  mtctr    r9
+821eb330: 4e800421  bctrl    
+821eb334: 7fe3fb78  mr       r3, r31
+821eb338: 4bfff711  bl       0x821eaa48
+821eb33c: 7fe3fb78  mr       r3, r31
+821eb340: 4bffda91  bl       0x821e8dd0
+821eb344: 38210070  addi     r1, r1, 0x70
+821eb348: 8181fff8  lwz      r12, -8(r1)
+821eb34c: 7d8803a6  mtlr     r12
+821eb350: ebe1fff0  ld       r31, -0x10(r1)
+821eb354: 4e800020  blr      
+
+====================================================================================================
+V. SetCurrentProgram 0x821ea000, Free Program branch: fitness minutes = duration * fFitnessRate, relaxation minutes = duration * fRelaxRate (bytes @+0x120417/+0x120418)
+====================================================================================================
+# Ready-made programs (duration 0) copy iFitnessDuration / iRelaxDuration from Programs.lua instead (0x821ea25c...).
+821ea2e4: 3d608216  lis      r11, -0x7dea
+821ea2e8: 388100c0  addi     r4, r1, 0xc0
+821ea2ec: 38ab0578  addi     r5, r11, 0x578
+821ea2f0: 48485209  bl       0x8266f4f8
+821ea2f4: 48484a0d  bl       0x8266ed00
+821ea2f8: 7bca0020  clrldi   r10, r30, 0x20
+821ea2fc: 3d200012  lis      r9, 0x12
+821ea300: f9410060  std      r10, 0x60(r1)
+821ea304: c8010060  lfd      f0, 0x60(r1)
+821ea308: ffe0069c  fcfid    f31, f0
+821ea30c: 61280417  ori      r8, r9, 0x417
+821ea310: fdbf0072  fmul     f13, f31, f1
+821ea314: 38610080  addi     r3, r1, 0x80
+821ea318: fd806e5e  fctidz   f12, f13
+821ea31c: d9810060  stfd     f12, 0x60(r1)
+821ea320: 88e10067  lbz      r7, 0x67(r1)
+821ea324: 7cff41ae  stbx     r7, r31, r8
+821ea328: 48485121  bl       0x8266f448
+821ea32c: 3cc08216  lis      r6, -0x7dea
+821ea330: 388100c0  addi     r4, r1, 0xc0
+821ea334: 38a60588  addi     r5, r6, 0x588
+821ea338: 38610080  addi     r3, r1, 0x80
+821ea33c: 484851bd  bl       0x8266f4f8
+821ea340: 484849c1  bl       0x8266ed00
+821ea344: fd7f0072  fmul     f11, f31, f1
+821ea348: 3ca00012  lis      r5, 0x12
+821ea34c: 60a40418  ori      r4, r5, 0x418
+821ea350: fd405e5e  fctidz   f10, f11
+821ea354: d9410060  stfd     f10, 0x60(r1)
+821ea358: 89610067  lbz      r11, 0x67(r1)
+821ea35c: 7d7f21ae  stbx     r11, r31, r4
+821ea360: 38610080  addi     r3, r1, 0x80
+821ea364: 484850e5  bl       0x8266f448
+821ea368: 570b063e  clrlwi   r11, r24, 0x18
+821ea36c: 2b0b0000  cmplwi   cr6, r11, 0
+
+====================================================================================================
+W. Boost Up relaxation 0x821e4228: Breath (group 14) then Suppleness (15) at the relaxation base level, then Pilates Postural (11) at the FITNESS level; position Stand
+====================================================================================================
+# Minutes from ConfigureBoostup (bytes @+0x36f64c Pilates, +0x36f64d Breath, +0x36f64e Suppleness); skipped when all are 0.
+
+# --- Breath block(s)
+821e42d4: 2b060000  cmplwi   cr6, r6, 0
+821e42d8: 409a001c  bne      cr6, 0x821e42f4
+821e42dc: 7d5fb8ae  lbzx     r10, r31, r23
+821e42e0: 2b0a0000  cmplwi   cr6, r10, 0
+821e42e4: 409a0010  bne      cr6, 0x821e42f4
+821e42e8: 7d5f58ae  lbzx     r10, r31, r11
+821e42ec: 2b0a0000  cmplwi   cr6, r10, 0
+821e42f0: 419a0264  beq      cr6, 0x821e4554
+821e42f4: 7d7f58ae  lbzx     r11, r31, r11
+821e42f8: 3f3f0037  addis    r25, r31, 0x37
+821e42fc: 3d008216  lis      r8, -0x7dea
+821e4300: 9bc10050  stb      r30, 0x50(r1)
+821e4304: 1d4b003c  mulli    r10, r11, 0x3c
+821e4308: 7d4907b4  extsw    r9, r10
+821e430c: 3d408216  lis      r10, -0x7dea
+821e4310: f9210070  std      r9, 0x70(r1)
+821e4314: c8010070  lfd      f0, 0x70(r1)
+821e4318: fda0069c  fcfid    f13, f0
+821e431c: 3d208216  lis      r9, -0x7dea
+821e4320: 3d608216  lis      r11, -0x7dea
+821e4324: fd806818  frsp     f12, f13
+821e4328: d1980000  stfs     f12, 0(r24)
+821e432c: 3b39f50c  addi     r25, r25, -0xaf4
+821e4330: 3ba807cc  addi     r29, r8, 0x7cc
+821e4334: 3b8907d8  addi     r28, r9, 0x7d8
+821e4338: 3b6a0820  addi     r27, r10, 0x820
+821e433c: 3b4b07e4  addi     r26, r11, 0x7e4
+821e4340: 93410058  stw      r26, 0x58(r1)
+821e4344: 38800000  li       r4, 0
+821e4348: 93c1005c  stw      r30, 0x5c(r1)
+821e434c: 38610058  addi     r3, r1, 0x58
+821e4350: 480eb8e9  bl       0x822cfc38
+821e4354: 9061005c  stw      r3, 0x5c(r1)
+821e4358: 93c10064  stw      r30, 0x64(r1)
+821e435c: 3880000e  li       r4, 0xe
+821e4360: 93810060  stw      r28, 0x60(r1)
+821e4364: 38610060  addi     r3, r1, 0x60
+821e4368: 81790000  lwz      r11, 0(r25)
+821e436c: 93610070  stw      r27, 0x70(r1)
+821e4370: 91610074  stw      r11, 0x74(r1)
+821e4374: 480eb8c5  bl       0x822cfc38
+821e4378: 90610064  stw      r3, 0x64(r1)
+821e437c: 93c1006c  stw      r30, 0x6c(r1)
+821e4380: 38800001  li       r4, 1
+821e4384: 93a10068  stw      r29, 0x68(r1)
+821e4388: 38610068  addi     r3, r1, 0x68
+821e438c: 480eb8ad  bl       0x822cfc38
+821e4390: 9061006c  stw      r3, 0x6c(r1)
+821e4394: 39410058  addi     r10, r1, 0x58
+821e4398: fc20f890  fmr      f1, f31
+821e439c: 39210050  addi     r9, r1, 0x50
+821e43a0: 38e10070  addi     r7, r1, 0x70
+821e43a4: 38c10060  addi     r6, r1, 0x60
+821e43a8: 38a00000  li       r5, 0
+821e43ac: 38810068  addi     r4, r1, 0x68
+821e43b0: 7fe3fb78  mr       r3, r31
+821e43b4: 4bffe7d5  bl       0x821e2b88
+821e43b8: 89410050  lbz      r10, 0x50(r1)
+821e43bc: 7d495378  mr       r9, r10
+821e43c0: 2b0a0000  cmplwi   cr6, r10, 0
+821e43c4: 419aff7c  beq      cr6, 0x821e4340
+
+# --- Suppleness block(s)
+821e43c8: 7d7fb8ae  lbzx     r11, r31, r23
+821e43cc: c0180000  lfs      f0, 0(r24)
+821e43d0: 9bc10050  stb      r30, 0x50(r1)
+821e43d4: 1d4b003c  mulli    r10, r11, 0x3c
+821e43d8: 7d4907b4  extsw    r9, r10
+821e43dc: f9210070  std      r9, 0x70(r1)
+821e43e0: c9a10070  lfd      f13, 0x70(r1)
+821e43e4: fd806e9c  fcfid    f12, f13
+821e43e8: fd606018  frsp     f11, f12
+821e43ec: ed4b002a  fadds    f10, f11, f0
+821e43f0: d1580000  stfs     f10, 0(r24)
+821e43f4: 93410068  stw      r26, 0x68(r1)
+821e43f8: 38800000  li       r4, 0
+821e43fc: 93c1006c  stw      r30, 0x6c(r1)
+821e4400: 38610068  addi     r3, r1, 0x68
+821e4404: 480eb835  bl       0x822cfc38
+821e4408: 9061006c  stw      r3, 0x6c(r1)
+821e440c: 93c10064  stw      r30, 0x64(r1)
+821e4410: 3880000f  li       r4, 0xf
+821e4414: 93810060  stw      r28, 0x60(r1)
+821e4418: 38610060  addi     r3, r1, 0x60
+821e441c: 81790000  lwz      r11, 0(r25)
+821e4420: 93610070  stw      r27, 0x70(r1)
+821e4424: 91610074  stw      r11, 0x74(r1)
+821e4428: 480eb811  bl       0x822cfc38
+821e442c: 90610064  stw      r3, 0x64(r1)
+821e4430: 93c1005c  stw      r30, 0x5c(r1)
+821e4434: 38800001  li       r4, 1
+821e4438: 93a10058  stw      r29, 0x58(r1)
+821e443c: 38610058  addi     r3, r1, 0x58
+821e4440: 480eb7f9  bl       0x822cfc38
+821e4444: 9061005c  stw      r3, 0x5c(r1)
+821e4448: 39410068  addi     r10, r1, 0x68
+821e444c: fc20f890  fmr      f1, f31
+821e4450: 39210050  addi     r9, r1, 0x50
+821e4454: 38e10070  addi     r7, r1, 0x70
+821e4458: 38c10060  addi     r6, r1, 0x60
+821e445c: 38a00000  li       r5, 0
+821e4460: 38810058  addi     r4, r1, 0x58
+821e4464: 7fe3fb78  mr       r3, r31
+821e4468: 4bffe721  bl       0x821e2b88
+821e446c: 89410050  lbz      r10, 0x50(r1)
+821e4470: 7d495378  mr       r9, r10
+821e4474: 2b0a0000  cmplwi   cr6, r10, 0
+821e4478: 419aff7c  beq      cr6, 0x821e43f4
+
+# --- Pilates block(s)
+821e447c: 89760000  lbz      r11, 0(r22)
+821e4480: c0180000  lfs      f0, 0(r24)
+821e4484: 3f3f0037  addis    r25, r31, 0x37
+821e4488: 9bc10050  stb      r30, 0x50(r1)
+821e448c: 1d4b003c  mulli    r10, r11, 0x3c
+821e4490: 7d4907b4  extsw    r9, r10
+821e4494: 3b39f504  addi     r25, r25, -0xafc
+821e4498: f9210070  std      r9, 0x70(r1)
+821e449c: c9a10070  lfd      f13, 0x70(r1)
+821e44a0: fd806e9c  fcfid    f12, f13
+821e44a4: fd606018  frsp     f11, f12
+821e44a8: ed4b002a  fadds    f10, f11, f0
+821e44ac: d1580000  stfs     f10, 0(r24)
+821e44b0: 93410068  stw      r26, 0x68(r1)
+821e44b4: 38800000  li       r4, 0
+821e44b8: 93c1006c  stw      r30, 0x6c(r1)
+821e44bc: 38610068  addi     r3, r1, 0x68
+821e44c0: 480eb779  bl       0x822cfc38
+821e44c4: 9061006c  stw      r3, 0x6c(r1)
+821e44c8: 93c10064  stw      r30, 0x64(r1)
+821e44cc: 3880000b  li       r4, 0xb
+821e44d0: 93810060  stw      r28, 0x60(r1)
+821e44d4: 38610060  addi     r3, r1, 0x60
+821e44d8: 81790000  lwz      r11, 0(r25)
+821e44dc: 93610070  stw      r27, 0x70(r1)
+821e44e0: 91610074  stw      r11, 0x74(r1)
+821e44e4: 480eb755  bl       0x822cfc38
+821e44e8: 90610064  stw      r3, 0x64(r1)
+821e44ec: 93c1005c  stw      r30, 0x5c(r1)
+821e44f0: 38800001  li       r4, 1
+821e44f4: 93a10058  stw      r29, 0x58(r1)
+821e44f8: 38610058  addi     r3, r1, 0x58
+821e44fc: 480eb73d  bl       0x822cfc38
+821e4500: 9061005c  stw      r3, 0x5c(r1)
+821e4504: 39410068  addi     r10, r1, 0x68
+821e4508: fc20f890  fmr      f1, f31
+821e450c: 39210050  addi     r9, r1, 0x50
+821e4510: 38e10070  addi     r7, r1, 0x70
+821e4514: 38c10060  addi     r6, r1, 0x60
+821e4518: 38a00000  li       r5, 0
+821e451c: 38810058  addi     r4, r1, 0x58
+821e4520: 7fe3fb78  mr       r3, r31
+821e4524: 4bffe665  bl       0x821e2b88
+821e4528: 89410050  lbz      r10, 0x50(r1)
+821e452c: 7d495378  mr       r9, r10
+821e4530: 2b0a0000  cmplwi   cr6, r10, 0
+821e4534: 419aff7c  beq      cr6, 0x821e44b0

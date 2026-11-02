@@ -13,6 +13,42 @@ All addresses are virtual addresses in the decrypted `default.xex` (base `0x8200
 - No internet? Download [`docs/index.html`](docs/index.html) (*Download raw file*) and open it in any browser; it works offline.
 - Prefer a spreadsheet? [`docs/relaxation_tracker.csv`](docs/relaxation_tracker.csv) has the same list with a *Done* column. Open it in Excel, or in Google Sheets with *File → Import*.
 
+## Recommended setup for Master of Relaxation
+
+*Worked out from the game's code and data files; not tested on a console.*
+
+### How the game is organised
+- The main menu has **Session**, Profile, Options and Nutrition. **Session** plays the next session of your current program: a fitness part, then a relaxation part. There's no other play mode.
+- A program is a **goal** plus either one of **six ready-made programs** for that goal (fixed length, sessions per week and minutes) or a **Free Program** you set up yourself (Profile menu → *Modify the program*). The goal decides the relaxation type and position of each session (see [the cycle](#what-decides-which-relaxation-exercises-you-get)), whichever kind of program you pick.
+- Before a session the coach may ask about **"The day's mood"**. Answering "I don't feel very good" adds a short **Boost Up** segment (see below).
+
+Relaxation time per session is what limits progress, and Free Program gives the most (Free Program: `0x821ea2e4`, session length × the goal's relaxation share from `Programs.lua`):
+
+| Goal | Ready-made programs | Free Program (max) |
+|---|---|---|
+| Lose weight (only goal with Suppleness) | 10 min | about 20 min (of an 80-minute session) |
+| Peace and calm (has Breath) | 20–32 min | **67 min** (of a 90-minute session) |
+| An active and balanced life (has Breath) | 10–27 min | 45 min (of a 90-minute session) |
+| Tone your look | 10 min | 10 min |
+
+### Steps
+1. **Free Program, goal *Peace and calm*: 90-minute sessions, 7 sessions a week, 25 weeks.** That's about 67 minutes of relaxation per session, alternating Breath and Pilates (standing, then floor every 4th session). Move the Relaxation slider through all five positions over the sessions so you see all three levels. This also gets **Master of Breathing**.
+2. **Then a new Free Program, goal *Lose weight*:** set the weight-loss target as high as it goes, 7 sessions a week, then the **shortest** program length it offers. That gives roughly 19–20 minutes of relaxation per session (the game sizes *Lose weight* sessions from the target, the sessions per week and the program length, and 75% of each is fitness). Every other session is Suppleness: standing for one, floor for the next. Cover all three levels again. This is the slow phase. Starting a new program keeps your completed exercises.
+3. **`PIL_KNEE_EXE_MED_4`** (*counts as Suppleness*) only appears in **Pilates sessions on the floor at Pro** (slider position 4 or 5).
+4. If you miss your Zen goal in a planned session, **accept the coach's offer of another session**: more relaxation blocks of the same type and position.
+5. **Boost Up** is a small extra under any goal. *Stressed* or *angry* gives 2–3 minutes of standing Breath; *tired* or *muscles sore* (middle answer) gives 3 minutes of standing Suppleness (`0x821e4228`, `BoostupSessions.lua`). It uses the slider's base level only, is standing only, and may fit at most one set of four exercises.
+6. Make sure every session finishes saving (see [the save hang](#the-save-hang)).
+
+### Playing more than one session a day
+Yes, you can, but extra sessions behave differently (calendar logic `0x821eaa48`, session end `0x821eb268`):
+- **On a day with a planned session**, the first session you play is that one.
+- **On a day with nothing planned**, the game brings forward a session you missed in the last 7 days or, failing that, the next planned session if it's within 7 days. So with 7 sessions a week you simply get the next one in the cycle every day.
+- **After that, any more sessions that day are "free" sessions.** They don't use up a planned session. Their relaxation type and position come from the next entry in your calendar, which is the next planned session (or the one you just played, if you played it early). The coach doesn't offer the extra Zen-goal session in them, and the sets they use aren't remembered for next time.
+- **Free sessions don't save when they finish.** Only planned sessions save at the end. Exercises completed in a free session stay in memory until the next save, which happens at the end of your next planned session or when you change settings. Turning the console off before then loses them. To save straight away, go to **Options → Volume** and confirm the three volume screens (no change needed): that calls the same save as the end of a session.
+
+### "Your efforts will pay off"
+This unlocks when you complete the **last session of your program** (`0x821eaa48`: the day's session is done and no planned session is left). The quickest way is a Free Program with **1 session a week for 2 weeks** (the shortest allowed): play the first session, then play the second the next day (it's brought forward because it's within 7 days).
+
 ## TL;DR
 
 | Problem | What the code shows |
@@ -38,6 +74,7 @@ The code doesn't show why digital copies would be affected more than discs. It d
 **Ways to reduce the risk (untested suggestions based on the code):**
 - Set a storage device explicitly before playing. There's an in-game **Options → Storage** entry (`GUI_PROFILEMENU_OPTIONS_STORAGE` / `ChangeStorage`). Make sure it has a few MB free; each save is about 3.5 MB.
 - **Don't open the Xbox Guide** near the end of a session or while it's saving. Don't remove USB storage while playing.
+- Extra ("free") sessions played after the day's planned session **don't save when they finish**. Their progress is only written by the next save (see [Playing more than one session a day](#playing-more-than-one-session-a-day); **Options → Volume** forces one).
 - If it hangs, that session's progress is gone. Keep sessions shorter while grinding, so a hang costs less.
 
 ## Achievement-by-achievement
@@ -52,7 +89,7 @@ The code doesn't show why digital copies would be affected more than discs. It d
 | 19 / 20 | Okay, we're done here / Perfect synchronization | profile updates | `0x821ec048` |
 | 25 | Relaxation Mission accomplished! | during the Relaxation part, this session's Zen ≥ the day's Zen goal | `0x8221a808` |
 | 28 / 29 | A quick Zen warm-up / Adept of Relaxation | relaxation-time counter ≥ 3,600 s / 72,000 s | `0x8221b088` |
-| 30 | Your efforts will pay off | set when the program's calendar logic marks the program as ended | `0x821eaa48` |
+| 30 | Your efforts will pay off | completing the **last session of your program** (the calendar logic finds no planned session left). Quickest: a Free Program with 1 session a week for 2 weeks; see [above](#your-efforts-will-pay-off) | `0x821eaa48` |
 
 ### How exercise completion is tracked (Breathing and Relaxation)
 - When an exercise finishes, `0x821eb0b8` calls `MarkDone(name, type)` (`0x821f4d10`). Each type keeps a list of up to 100 exercise names, and its counter `done[type]` only goes up for a **new** name. Repeats don't count twice.
@@ -112,12 +149,7 @@ Level and position restrictions on top of that:
 
 So you need Pilates standing and floor, Suppleness standing and floor, and Breath standing, **each at all three levels**. Going through every list once is 141 sets of four (24 Breath, 70 Pilates, 47 Suppleness), spread over many sessions.
 
-**Practical route (worked out from the code, not tested):**
-1. **Start with *Peace and calm* or *An active and balanced life*.** That gives you Breath sessions plus Pilates standing and floor. Play sessions at each slider level: lowest, middle and highest. Positions 2 and 4 cover two levels in one session, but only half the time each. Breath needs all three levels too: for example, Breath sessions at position 2 (Normal, then Newb) and at position 4 or 5 (Pro), repeated until nothing new turns up. That also gets you **Master of Breathing**.
-2. **Then switch the goal to *Lose weight*** (Profile menu → *Modify the goal*). That's the only goal with Suppleness sessions. It alternates Pilates and Suppleness, standing for two sessions and then floor for two. Again, cover all three levels. Changing the goal stops the current program, but it doesn't touch the completed-exercise list. That list is kept separately, and only starting a brand-new profile clears it (`0x821f4740`).
-3. Don't forget `PIL_KNEE_EXE_MED_4`. Despite being a Suppleness exercise, it only shows up in **Pilates sessions on the floor at Pro** (slider position 4 or 5).
-4. If you miss the Zen goal, **accept the coach's offer of another session**. It adds more blocks of the same type and position, so it's an easy way to see extra exercises.
-5. Make sure saves complete (see above). A hung save wipes that session's newly completed exercises, and the "already used" set memory too.
+For how to set the game up to get all of these, see [Recommended setup for Master of Relaxation](#recommended-setup-for-master-of-relaxation).
 
 Players have reported getting Master of Breathing in one long session. That fits if the last missing Breath exercises came in that session. A single session can cover at most two of the three levels (slider position 2 or 4), and all three levels have Breath exercises of their own.
 
