@@ -49,7 +49,7 @@ The code doesn't show why digital copies would be affected more than discs. It d
 - When an exercise finishes, `0x821eb0b8` calls `MarkDone(name, type)` (`0x821f4d10`). Each type keeps a list of up to 100 exercise names, and its counter `done[type]` only goes up for a **new** name. Repeats don't count twice.
 - `total[type]` is rebuilt at every boot by counting entries of that `Type` in `Exercises.lua` (`0x821e0488`).
 - The check is `done == total` for Breath (Master of Breathing), and for Pilates, Breath and Suppleness together (Master of Relaxation).
-- Only exercises played as **main session exercises** count under their own type. Warm-up, stretch-end and loosening exercises are relabelled (types 7, 8 and 9) and ignored.
+- Only exercises played as **main session exercises** count under their own type. Warm-up and loosening exercises are relabelled (types 7 and 9) and ignored. Stretch-end exercises are relabelled (type 8) on one of the two code paths that build them.
 
 ### Why Master of Relaxation is so hard
 Main relaxation exercises come from `ListCombination.cfg`, keyed by **muscle group × position × relaxation level**. The picker (`0x821e6270`) draws one 4-exercise combination at a time and prefers ones you haven't had yet. [`evidence/relaxation_exercises.csv`](evidence/relaxation_exercises.csv) lists every one of the 129 exercises with the levels and positions where it can appear:
