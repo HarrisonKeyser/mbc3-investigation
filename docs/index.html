@@ -45,11 +45,8 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(26px,4vw,36px);l
 .meter .ach.got{color:var(--done);font-weight:600}
 @media (max-width:640px){.bar .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}}
 main{padding-block:18px 60px;display:grid;gap:22px}
-details.guide{background:var(--panel);border:1px solid var(--line);border-radius:10px}
-details.guide>summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
-details.guide>summary::after{content:"Show";color:var(--accent);font-weight:500}
-details.guide[open]>summary::after{content:"Hide"}
-details.guide>summary::-webkit-details-marker{display:none}
+section.guide{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+section.guide>h2{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0;padding:16px 16px 10px;text-wrap:balance}
 .guide-body{padding:0 16px 16px;display:grid;gap:14px}
 .guide-body p{margin:0;max-width:68ch}
 .tablebox{overflow-x:auto}
@@ -63,7 +60,7 @@ th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
 .seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:13.5px;padding:8px 11px;cursor:pointer}
 .seg button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent);font-weight:600}
-button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 section.group{display:grid;gap:8px}
 .ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:6px}
 .ghead h2{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0}
@@ -110,8 +107,8 @@ footer{font-size:12.5px;color:var(--muted);padding-block:0 40px}
 </div></div>
 
 <div class="wrap"><main>
-  <details class="guide">
-    <summary>How the game decides what you get</summary>
+  <section class="guide" aria-labelledby="guide-h">
+    <h2 id="guide-h">How the game decides what you get</h2>
     <div class="guide-body">
       <p><b>Your goal decides the session type and position.</b> Every programmed session follows this 4-session cycle. Suppleness only comes up under <i>Lose weight</i>, and Breath only under <i>Peace and calm</i> or <i>An active and balanced life</i>, so you need to change goal at least once (Profile menu → Modify the goal). Changing goal keeps your completed exercises.</p>
       <div class="tablebox"><table>
@@ -126,7 +123,7 @@ footer{font-size:12.5px;color:var(--muted);padding-block:0 40px}
       <p><b>Telling sessions apart on screen.</b> The title during relaxation reads <i>Simple breathing</i> for the intro, <i>Assisted breathing</i> in a Breath session, and <i>Exercises</i> in a Pilates or Suppleness session. Pilates and Suppleness look alike, so use the cycle above: under <i>Lose weight</i>, sessions 2 and 4 are Suppleness. Floor exercises are done kneeling, sitting or lying down.</p>
       <p><b>The game only counts exercises from the main relaxation blocks.</b> Warm-ups and loosening moves don't count. A session that hangs on "Saving…" loses everything it added, so un-tick anything from a session that didn't save.</p>
     </div>
-  </details>
+  </section>
 
   <div class="save" aria-live="polite">
     <div class="status" id="status">Progress is saved in this browser.</div>
