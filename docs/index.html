@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MBC3 Relaxation Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky progress bar over a single reading column; sessions grouped as the game serves them (type · position) */
+:root{
+  --bg:#f3f6f5; --panel:#ffffff; --ink:#1c2827; --muted:#5d6e6c; --line:#d9e2e0;
+  --accent:#0f6e6a; --accent-soft:#dcefed;
+  --pil:#a86f12; --pil-soft:#f6ead3; --bre:#2f679e; --bre-soft:#dde8f4; --sup:#874a7a; --sup-soft:#f1e1ee;
+  --done:#2e7d4f; --done-soft:#e0f1e6;
+  --f-display:"Young Serif", Georgia, serif; --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121a1a; --panel:#1a2423; --ink:#e4ecea; --muted:#94a6a3; --line:#2c3a39;
+  --accent:#5cc0b8; --accent-soft:#1d3634;
+  --pil:#e0a647; --pil-soft:#3a2e18; --bre:#7fb1e6; --bre-soft:#1d2c3d; --sup:#d293c4; --sup-soft:#352234;
+  --done:#6fcf95; --done-soft:#1c3326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a1a; --panel:#1a2423; --ink:#e4ecea; --muted:#94a6a3; --line:#2c3a39;
+  --accent:#5cc0b8; --accent-soft:#1d3634;
+  --pil:#e0a647; --pil-soft:#3a2e18; --bre:#7fb1e6; --bre-soft:#1d2c3d; --sup:#d293c4; --sup-soft:#352234;
+  --done:#6fcf95; --done-soft:#1c3326; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 8px}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(26px,4vw,36px);line-height:1.15;margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line);margin-top:18px}
+.bar .wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding-block:12px}
+.meter{min-width:0}
+.meter .lab{display:flex;justify-content:space-between;gap:8px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.meter .num{font-variant-numeric:tabular-nums;color:var(--ink)}
+.track{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+.fill{height:100%;width:0;border-radius:4px;transition:width .3s}
+.m-pil .fill{background:var(--pil)} .m-bre .fill{background:var(--bre)} .m-sup .fill{background:var(--sup)} .m-all .fill{background:var(--accent)}
+.meter .ach{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}
+.meter .ach.got{color:var(--done);font-weight:600}
+@media (max-width:640px){.bar .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+main{padding-block:18px 60px;display:grid;gap:22px}
+details.guide{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+details.guide>summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.guide>summary::after{content:"Show";color:var(--accent);font-weight:500}
+details.guide[open]>summary::after{content:"Hide"}
+details.guide>summary::-webkit-details-marker{display:none}
+.guide-body{padding:0 16px 16px;display:grid;gap:14px}
+.guide-body p{margin:0;max-width:68ch}
+.tablebox{overflow-x:auto}
+table{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.tag{display:inline-block;padding:1px 7px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-Pilates{background:var(--pil-soft);color:var(--pil)} .t-Breath{background:var(--bre-soft);color:var(--bre)} .t-Suppleness{background:var(--sup-soft);color:var(--sup)} .t-Intro{background:var(--accent-soft);color:var(--accent)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.controls input[type=search]{flex:1 1 220px;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:13.5px;padding:8px 11px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.group{display:grid;gap:8px}
+.ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:6px}
+.ghead h2{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0}
+.ghead .gmeta{font-size:13px;color:var(--muted)}
+.ghead .gcount{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+ul.rows{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+li.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+li.row.is-done{background:var(--done-soft);border-color:transparent}
+li.row input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--done);cursor:pointer}
+.rname{font-weight:600;min-width:0}
+li.row.is-done .rname{color:var(--done)}
+.rsub{grid-column:2/4;font-size:13px;color:var(--muted);min-width:0}
+.rsub .tip{font-style:italic}
+.rid{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);word-break:break-all}
+.lv{display:flex;gap:4px}
+.lv span{font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);opacity:.45}
+.lv span.on{opacity:1;color:var(--ink);border-color:var(--ink)}
+.flag{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:600;color:var(--sup)}
+.save{display:grid;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.save .status{font-size:13.5px;color:var(--muted)}
+.save .status b{color:var(--ink)}
+.save .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-size:13.5px;font-weight:600;padding:8px 12px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--panel);cursor:pointer}
+.btn.ghost{background:none;color:var(--accent)}
+.save textarea{width:100%;min-height:58px;font-family:var(--f-mono);font-size:12px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+.msg{font-size:13px;color:var(--accent);min-height:1.2em}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+footer{font-size:12.5px;color:var(--muted);padding-block:0 40px}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>My Body Coach 3: Relaxation Tracker</h1>
+  <p class="lede">Tick off all 129 relaxation exercises for Master of Relaxation (and the 22 Breath exercises for Master of Breathing). The exercises are grouped the way the game serves them: by session type and position. The names, poses and coaching lines come from the game's own files.</p>
+</div></header>
+
+<div class="bar" role="region" aria-label="Progress"><div class="wrap">
+  <div class="meter m-pil"><div class="lab"><span>Pilates</span><span class="num" id="n-pil">0/61</span></div><div class="track"><div class="fill" id="f-pil"></div></div></div>
+  <div class="meter m-bre"><div class="lab"><span>Breath</span><span class="num" id="n-bre">0/22</span></div><div class="track"><div class="fill" id="f-bre"></div></div><div class="ach" id="a-bre">Master of Breathing</div></div>
+  <div class="meter m-sup"><div class="lab"><span>Suppleness</span><span class="num" id="n-sup">0/46</span></div><div class="track"><div class="fill" id="f-sup"></div></div></div>
+  <div class="meter m-all"><div class="lab"><span>All</span><span class="num" id="n-all">0/129</span></div><div class="track"><div class="fill" id="f-all"></div></div><div class="ach" id="a-all">Master of Relaxation</div></div>
+</div></div>
+
+<div class="wrap"><main>
+  <details class="guide">
+    <summary>How the game decides what you get</summary>
+    <div class="guide-body">
+      <p><b>Your goal decides the session type and position.</b> Every programmed session follows this 4-session cycle. Suppleness only comes up under <i>Lose weight</i>, and Breath only under <i>Peace and calm</i> or <i>An active and balanced life</i>, so you need to change goal at least once (Profile menu → Modify the goal). Changing goal keeps your completed exercises.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Goal</th><th>1st session</th><th>2nd</th><th>3rd</th><th>4th, then repeats</th></tr></thead>
+        <tbody>
+          <tr><td>Lose weight</td><td><span class="tag t-Pilates">Pilates</span> standing</td><td><span class="tag t-Suppleness">Suppleness</span> standing</td><td><span class="tag t-Pilates">Pilates</span> floor</td><td><span class="tag t-Suppleness">Suppleness</span> floor</td></tr>
+          <tr><td>Peace and calm</td><td><span class="tag t-Breath">Breath</span> standing</td><td><span class="tag t-Pilates">Pilates</span> standing</td><td><span class="tag t-Breath">Breath</span> standing</td><td><span class="tag t-Pilates">Pilates</span> floor</td></tr>
+          <tr><td>An active and balanced life</td><td><span class="tag t-Pilates">Pilates</span> standing</td><td><span class="tag t-Breath">Breath</span> standing</td><td><span class="tag t-Pilates">Pilates</span> floor</td><td><span class="tag t-Breath">Breath</span> standing</td></tr>
+          <tr><td>Tone your look</td><td><span class="tag t-Pilates">Pilates</span> standing</td><td><span class="tag t-Pilates">Pilates</span> floor</td><td><span class="tag t-Pilates">Pilates</span> standing</td><td><span class="tag t-Pilates">Pilates</span> floor</td></tr>
+        </tbody></table></div>
+      <p><b>The Relaxation level slider decides the level.</b> Lowest = Newb, middle = Normal, highest = Pro. Position 2 gives Normal for the first half of the relaxation time, then Newb. Position 4 gives Pro for the first half, then Normal. Many exercises exist at only one level (the N / Nm / P marks on each row).</p>
+      <p><b>Telling sessions apart on screen.</b> The title during relaxation reads <i>Simple breathing</i> for the intro, <i>Assisted breathing</i> in a Breath session, and <i>Exercises</i> in a Pilates or Suppleness session. Pilates and Suppleness look alike, so use the cycle above: under <i>Lose weight</i>, sessions 2 and 4 are Suppleness. Floor exercises are done kneeling, sitting or lying down.</p>
+      <p><b>The game only counts exercises from the main relaxation blocks.</b> Warm-ups and loosening moves don't count. A session that hangs on "Saving…" loses everything it added, so un-tick anything from a session that didn't save.</p>
+    </div>
+  </details>
+
+  <div class="save" aria-live="polite">
+    <div class="status" id="status">Progress is saved in this browser.</div>
+    <div class="acts">
+      <button class="btn ghost" id="b-copy" type="button">Copy progress code</button>
+      <button class="btn ghost" id="b-show-import" type="button">Paste a code</button>
+      <button class="btn ghost" id="b-clear" type="button">Clear all ticks</button>
+    </div>
+    <div id="import-box" hidden>
+      <label for="code-in" class="status">Paste a progress code from this page (it replaces your current ticks):</label>
+      <textarea id="code-in" spellcheck="false"></textarea>
+      <div class="acts"><button class="btn" id="b-import" type="button">Load code</button><button class="btn ghost" id="b-cancel" type="button">Cancel</button></div>
+    </div>
+    <div id="clear-box" hidden class="acts"><span class="status">Remove every tick?</span><button class="btn" id="b-clear-yes" type="button">Yes, clear</button><button class="btn ghost" id="b-clear-no" type="button">Keep them</button></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search names, poses or coaching lines" aria-label="Search exercises">
+    <div class="seg" role="group" aria-label="Level"><button type="button" data-lv="" aria-pressed="true">All levels</button><button type="button" data-lv="Newb" aria-pressed="false">Newb</button><button type="button" data-lv="Normal" aria-pressed="false">Normal</button><button type="button" data-lv="Pro" aria-pressed="false">Pro</button></div>
+    <div class="seg" role="group" aria-label="Show"><button type="button" data-show="all" aria-pressed="true">All</button><button type="button" data-show="todo" aria-pressed="false">Still to do</button></div>
+  </div>
+
+  <div id="groups"></div>
+</main>
+<footer>Built from the game's data files (EUR release) for the <a href="https://github.com/HarrisonKeyser/mbc3-investigation" style="color:var(--accent)">mbc3-investigation</a> write-up. Not affiliated with the game's publisher. The exercise lists and goal cycle are from the game's code; the routes haven't been tested on a console.</footer>
+</div>
+<script>
+const DATA = [{"id": "PIL_KNEE_EXE_HARD_1_R", "name": "Raise your right leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "kneeling", "tip": "Breathe out while raising the leg stretched backward."}, {"id": "PIL_KNEE_EXE_HARD_1_L", "name": "Raise your left leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "kneeling", "tip": "Breathe out while raising the leg stretched backward."}, {"id": "PIL_KNEE_EXE_HARD_2_R", "name": "Extend your right leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "kneeling", "tip": "Breathe out while bringing your leg against your chest."}, {"id": "PIL_KNEE_EXE_HARD_2_L", "name": "Extend your left leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "kneeling", "tip": "Breathe out while bringing your leg against your chest."}, {"id": "PIL_KNEE_EXE_MED_1_L", "name": "Left arch", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "kneeling", "tip": "Breathe out while stretching your arms toward the stretched leg, one arm above your head."}, {"id": "PIL_KNEE_EXE_MED_1_R", "name": "Right arch", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "kneeling", "tip": "Breathe out while stretching your arms toward the stretched leg, one arm above your head."}, {"id": "PIL_KNEE_EXE_MED_2_L", "name": "Bending and left lateral extension", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal"], "pose": "kneeling", "tip": "Breathe out while putting one foot on the ground, then stretch your arms upward."}, {"id": "PIL_KNEE_EXE_MED_2_R", "name": "Bending and right lateral extension", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal"], "pose": "kneeling", "tip": "Breathe out while putting one foot on the ground, then stretch your arms upward."}, {"id": "PIL_KNEE_EXE_MED_3", "name": "Prayer", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal"], "pose": "kneeling", "tip": "Breathe out while raising your bottom, with your back straight, and raise your stretched arms."}, {"id": "PIL_KNEE_EXE_MED_4", "name": "Twist your chest and bend your knees", "type": "Suppleness", "where": "Pilates · floor", "levels": ["Pro"], "pose": "kneeling", "tip": "Breathe out, with your chest in an upright position. Fists on your chest, stretch your elbows out and pivot to the left."}, {"id": "PIL_KNEE_STRETCH_1", "name": "Stick position", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "kneeling", "tip": "Breathe in while raising your arms."}, {"id": "PIL_KNEE_STRETCH_2", "name": "Stretching half-bent", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "kneeling", "tip": "Breathe in, your hands to your chest, fingers crossed. Then breathe out, arms stretched out in front of you."}, {"id": "PIL_KNEE_STRETCH_3_L", "name": "Stretching over to the left", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "kneeling", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_KNEE_STRETCH_3_R", "name": "Stretching over to the right", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "kneeling", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_KNEE_STRETCH_4_L", "name": "Stretching in a half-circle to the left", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "kneeling", "tip": "Breathe in while leaning to the side, hand on the ground."}, {"id": "PIL_KNEE_STRETCH_4_R", "name": "Stretching in a half-circle to the right", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "kneeling", "tip": "Breathe in while leaning to the side, hand on the ground."}, {"id": "PIL_LIEDOWN_EXE_EASY_1_L", "name": "Left kick", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "liedownl", "tip": "Breathe out while slightly raising the leg you're leaning on."}, {"id": "PIL_LIEDOWN_EXE_EASY_1_R", "name": "Right kick", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "liedownr", "tip": "Breathe out while slightly raising the leg you're leaning on."}, {"id": "PIL_LIEDOWN_EXE_EASY_2_L", "name": "Tilt your left leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "liedownl", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_EASY_2_R", "name": "Tilt your right leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "liedownr", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_EASY_3_L", "name": "Bend and extend your left leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "liedownl", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_EASY_3_R", "name": "Bend and extend your right leg", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "liedownr", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_HARD_1_L", "name": "Raise the left hip", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownl", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_HARD_1_R", "name": "Raise the right hip", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownr", "tip": "Breathe out while stretching one leg forward."}, {"id": "PIL_LIEDOWN_EXE_HARD_2_L", "name": "Left scissors", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownl", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_EXE_HARD_2_R", "name": "Right scissors", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownr", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_EXE_HARD_3_L", "name": "Left crab", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownl", "tip": "Breathe out while pointing your right knee toward the ground."}, {"id": "PIL_LIEDOWN_EXE_HARD_3_R", "name": "Right crab", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "liedownr", "tip": "Breathe out while pointing your right knee toward the ground."}, {"id": "PIL_LIEDOWN_EXE_MED_1_L", "name": "Beating your legs to the left", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal", "Pro"], "pose": "liedownl", "tip": "Breathe out and stretch the leg forward."}, {"id": "PIL_LIEDOWN_EXE_MED_1_R", "name": "Beating your legs to the right", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal", "Pro"], "pose": "liedownr", "tip": "Breathe out and stretch the leg forward."}, {"id": "PIL_LIEDOWN_EXE_MED_2_L", "name": "Alternately flex your legs to the left", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "liedownl", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_EXE_MED_2_R", "name": "Alternately flex your legs to the right", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "liedownr", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_EXE_MED_3_L", "name": "L-shaped posture left", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "liedownl", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_EXE_MED_3_R", "name": "L-shaped posture right", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "liedownr", "tip": "Breathe out while raising your feet."}, {"id": "PIL_LIEDOWN_STRETCH_1_L", "name": "Dancer stretch to the left", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "liedownl", "tip": "Breathe in."}, {"id": "PIL_LIEDOWN_STRETCH_1_R", "name": "Dancer stretch to the right", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "liedownr", "tip": "Breathe in."}, {"id": "PIL_LIEDOWN_STRETCH_2_L", "name": "Stretching your left knee to your chest", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "liedownl", "tip": "Breathe in."}, {"id": "PIL_LIEDOWN_STRETCH_2_R", "name": "Stretching your right knee to your chest", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "liedownr", "tip": "Breathe in."}, {"id": "PIL_LIEDOWN_STRETCH_3_L", "name": "Stretching your left quadriceps", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "liedownl", "tip": "Breathe in."}, {"id": "PIL_LIEDOWN_STRETCH_3_R", "name": "Stretching your right quadriceps", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal", "Pro"], "pose": "liedownr", "tip": "Breathe in."}, {"id": "PIL_SIT_EXE_EASY_1", "name": "Pulling and raising", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "sitting", "tip": "Breathe out while bending forward, arms stretched."}, {"id": "PIL_SIT_EXE_EASY_2", "name": "Swan", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "sitting", "tip": "Breathe out while raising your arms."}, {"id": "PIL_SIT_EXE_EASY_3", "name": "Balanced plank", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "sitting", "tip": "Breathe out while stretching your arms to the side."}, {"id": "PIL_SIT_EXE_EASY_4_L", "name": "Left dancer", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "sitting", "tip": "Breathe out while pointing your elbow backward."}, {"id": "PIL_SIT_EXE_EASY_4_R", "name": "Right dancer", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb"], "pose": "sitting", "tip": "Breathe out while pointing your elbow backward."}, {"id": "PIL_SIT_EXE_HARD_1", "name": "Rafting", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "sitting", "tip": "Hands folded against your chest, breathe out while rotating your chest."}, {"id": "PIL_SIT_EXE_HARD_2", "name": "Bent and balanced legs", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "sitting", "tip": "Breathe out while raising your arms, then fold your legs without touching the ground."}, {"id": "PIL_SIT_EXE_HARD_3", "name": "Twist your chest and straighten your knees", "type": "Pilates", "where": "Pilates · floor", "levels": ["Pro"], "pose": "sitting", "tip": "Breathe out while rotating your chest."}, {"id": "PIL_SIT_EXE_HARD_4", "name": "Straight legs and balanced", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal", "Pro"], "pose": "sitting", "tip": "Breathe out while stretching your legs, and raise your arms."}, {"id": "PIL_SIT_EXE_MED_1", "name": "Seated rudder", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "sitting", "tip": "Breathe out while stretching your arms to the side."}, {"id": "PIL_SIT_EXE_MED_2", "name": "Twist your chest, arms bent", "type": "Pilates", "where": "Pilates · floor", "levels": ["Newb", "Normal"], "pose": "sitting", "tip": "Breathe out while rotating your chest to one side."}, {"id": "PIL_SIT_EXE_MED_3", "name": "Twist your chest, arms to the side", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal"], "pose": "sitting", "tip": "Breathe out while stretching your right arm to the left."}, {"id": "PIL_SIT_EXE_MED_4", "name": "Twist your chest, arms stretched", "type": "Pilates", "where": "Pilates · floor", "levels": ["Normal"], "pose": "sitting", "tip": "Breathe out while turning your chest, one arm in front of you and the other behind."}, {"id": "PIL_SIT_STRETCH_1", "name": "Stretching in a W", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "sitting", "tip": "Breathe in."}, {"id": "PIL_SIT_STRETCH_2", "name": "Stretching up", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Normal"], "pose": "sitting", "tip": "Breathe in while raising your arms."}, {"id": "PIL_SIT_STRETCH_3_L", "name": "American split", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal", "Pro"], "pose": "sitting", "tip": "Breathe in."}, {"id": "PIL_SIT_STRETCH_3_R", "name": "American split (other side)", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal", "Pro"], "pose": "sitting", "tip": "Breathe in."}, {"id": "PIL_SIT_STRETCH_4_R", "name": "Stretching in a half-circle to the right, seated", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "sitting", "tip": "Breathe in."}, {"id": "PIL_SIT_STRETCH_4_L", "name": "Stretching in a half-circle to the left, seated", "type": "Suppleness", "where": "Suppleness · floor", "levels": ["Newb", "Normal"], "pose": "sitting", "tip": "Breathe in."}, {"id": "PIL_STAND_FIT_BREATH_1", "name": "Raising your arms", "type": "Breath", "where": "Breath · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in while stretching your arms out to the side."}, {"id": "PIL_STAND_FIT_BREATH_2", "name": "Turtle breath", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in while raising your arms."}, {"id": "PIL_STAND_FIT_BREATH_3", "name": "Breathing arms alternating", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in, breathe out, your arm stretched out to the side."}, {"id": "PIL_STAND_FIT_BREATH_4_L", "name": "Breathing chest extended to the left", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in while raising your arms."}, {"id": "PIL_STAND_FIT_BREATH_4_R", "name": "Breathing chest extended to the right", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in while raising your arms."}, {"id": "PIL_STAND_FIT_BREATH_5_L", "name": "Breathing in a half-moon to the left", "type": "Breath", "where": "Breath · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in and out, tilt your chest to one side, arm stretched."}, {"id": "PIL_STAND_FIT_BREATH_5_R", "name": "Breathing in a half-moon to the right", "type": "Breath", "where": "Breath · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in and out, tilt your chest to one side, arm stretched."}, {"id": "PIL_STAND_FIT_EXE_1", "name": "Salutation", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe out while raising your arms. Lower your pelvis while flexing your legs."}, {"id": "PIL_STAND_FIT_EXE_2", "name": "Swim", "type": "Pilates", "where": "Pilates · standing or floor", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while bending forward, back straight and arms stretched."}, {"id": "PIL_STAND_FIT_EXE_3_L", "name": "Lowering your pelvis to the left", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while stretching your arms to the side."}, {"id": "PIL_STAND_FIT_EXE_3_R", "name": "Lowering your pelvis to the right", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while stretching your arms to the side."}, {"id": "PIL_STAND_FIT_EXE_4", "name": "Raising your knee", "type": "Pilates", "where": "Pilates · standing or floor", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms, your knee bent at hip-level."}, {"id": "PIL_STAND_FIT_STRETCH_1_L", "name": "Vertically aligning your arms to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg out, toes raised."}, {"id": "PIL_STAND_FIT_STRETCH_1_R", "name": "Vertically aligning your arms to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg out, toes raised."}, {"id": "PIL_STAND_FIT_STRETCH_2_L", "name": "Lateral flexing of your chest to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg sideways, toes raised."}, {"id": "PIL_STAND_FIT_STRETCH_2_R", "name": "Lateral flexing of your chest to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg sideways, toes raised."}, {"id": "PIL_STAND_FIT_STRETCH_3", "name": "Stretching your feet", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Legs out, back straight, breathe in."}, {"id": "PIL_STAND_FIT_STRETCH_4_L", "name": "Stretching the back of your left leg", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg out, toes raised."}, {"id": "PIL_STAND_FIT_STRETCH_4_R", "name": "Stretching the back of your right leg", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe in while stretching your leg out, toes raised."}, {"id": "PIL_STAND_NOMOVE_BREATH_1", "name": "Anti-stress", "type": "Breath", "where": "Intro", "levels": [], "pose": "standing", "tip": "Feet together, place your hands below your navel."}, {"id": "PIL_STAND_NOMOVE_BREATH_2", "name": "Rebalancing your energy", "type": "Breath", "where": "Intro", "levels": [], "pose": "standing", "tip": "Feet apart, place your hands below your navel."}, {"id": "PIL_STAND_PF_EXE_1_L", "name": "Right foot", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe out while leaning to one side, one hand on your hip and the other one on the ground."}, {"id": "PIL_STAND_PF_EXE_1_R", "name": "Left foot", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe out while leaning to one side, one hand on your hip and the other one on the ground."}, {"id": "PIL_STAND_PF_EXE_2_L", "name": "Left sundown", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms."}, {"id": "PIL_STAND_PF_EXE_2_R", "name": "Right sundown", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms."}, {"id": "PIL_STAND_PF_EXE_3_L", "name": "Left pink flamingo", "type": "Pilates", "where": "Pilates · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe out while lifting your leg backward and stretching your arms forward."}, {"id": "PIL_STAND_PF_EXE_3_R", "name": "Right pink flamingo", "type": "Pilates", "where": "Pilates · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe out while lifting your leg backward and stretching your arms forward."}, {"id": "PIL_STAND_PF_EXE_4_L", "name": "Spreading your wings left", "type": "Pilates", "where": "Pilates · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms, your back leg on tiptoe."}, {"id": "PIL_STAND_PF_EXE_4_R", "name": "Spreading your wings right", "type": "Pilates", "where": "Pilates · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms, your back leg on tiptoe."}, {"id": "PIL_STAND_PF_STRETCH_1_L", "name": "Upside-down triangle", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in."}, {"id": "PIL_STAND_PF_STRETCH_1_R", "name": "Upside-down triangle (other side)", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in."}, {"id": "PIL_STAND_PF_STRETCH_2_L", "name": "Stretching your shoulders to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, fingers crossed behind your back."}, {"id": "PIL_STAND_PF_STRETCH_2_R", "name": "Stretching your shoulders to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, fingers crossed behind your back."}, {"id": "PIL_STAND_PF_STRETCH_3_L", "name": "Stretching the arm to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in while stretching your arms towards you."}, {"id": "PIL_STAND_PF_STRETCH_3_R", "name": "Stretching the arm to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in while stretching your arms towards you."}, {"id": "PIL_STAND_PF_STRETCH_4_L", "name": "Horizontal stretching of the chest to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in, leg stretching out to the side and toes raised, and raise your arms to the side."}, {"id": "PIL_STAND_PF_STRETCH_4_R", "name": "Horizontal stretching of the chest to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe in, leg stretching out to the side and toes raised, and raise your arms to the side."}, {"id": "PIL_STAND_PJ_BREATH_1", "name": "Sun salutation feet together", "type": "Breath", "where": "Breath · standing", "levels": ["Pro"], "pose": "standing", "tip": "Breathe in while raising your arms and crossing your fingers. Breathe out while pulling upwards."}, {"id": "PIL_STAND_PJ_BREATH_2", "name": "Eagle breath feet together", "type": "Breath", "where": "Breath · standing", "levels": ["Pro"], "pose": "standing", "tip": "Feet together, breathe in."}, {"id": "PIL_STAND_PJ_BREATH_3", "name": "Relaxing with your arms in front", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Feet together, breathe in."}, {"id": "PIL_STAND_PJ_BREATH_4", "name": "High lateral breathing", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in, arms crossed above your head, then breathe out."}, {"id": "PIL_STAND_PJ_BREATH_5_L", "name": "Right lateral breathing", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_STAND_PJ_BREATH_5_R", "name": "Left lateral breathing", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_STAND_PJ_EXE_1", "name": "Scale", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out, toes stretched out and arms raised."}, {"id": "PIL_STAND_PJ_EXE_2", "name": "Metronome", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while stretching your arms out to the side."}, {"id": "PIL_STAND_PJ_EXE_3", "name": "Eagle salute", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb"], "pose": "standing", "tip": "Breathe out while bending forward, hands on your shoulders."}, {"id": "PIL_STAND_PJ_EXE_4", "name": "Water skiing", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while bending your torso and flexing your legs."}, {"id": "PIL_STAND_PJ_STRETCH_1", "name": "Starting point", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Legs out, back straight, breathe in."}, {"id": "PIL_STAND_PJ_STRETCH_2", "name": "Free stretching", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_STAND_PJ_STRETCH_3_L", "name": "Simple stretching left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in while bending forward and place your hands on the ground."}, {"id": "PIL_STAND_PJ_STRETCH_3_R", "name": "Simple stretching right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in while bending forward and place your hands on the ground."}, {"id": "PIL_STAND_PJ_STRETCH_4", "name": "Stretching of the rooster", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe in, fingers crossed behind your back."}, {"id": "PIL_STAND_PO_BREATH_1", "name": "Breathing in a shell", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Feet apart and legs out, breathe in."}, {"id": "PIL_STAND_PO_BREATH_2", "name": "Sun salutation feet apart", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe in while raising your arms, fingers crossed, then breathe out."}, {"id": "PIL_STAND_PO_BREATH_3", "name": "Relaxing with your arms in front feet apart", "type": "Breath", "where": "Breath · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, then breathe out while bending forward, arms stretched."}, {"id": "PIL_STAND_PO_BREATH_4", "name": "Circulation of energy", "type": "Breath", "where": "Breath · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe in while stretching your arms out to the side."}, {"id": "PIL_STAND_PO_BREATH_5", "name": "Eagle breath feet apart", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Feet apart and legs out, breathe in."}, {"id": "PIL_STAND_PO_BREATH_6_L", "name": "Low lateral breathing", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in, then breathe out while bending forward, arm stretched out to the side."}, {"id": "PIL_STAND_PO_BREATH_6_R", "name": "Low lateral breathing (other side)", "type": "Breath", "where": "Breath · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in, then breathe out while bending forward, arm stretched out to the side."}, {"id": "PIL_STAND_PO_EXE_1", "name": "The warrior", "type": "Pilates", "where": "Pilates · standing or floor", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while raising your arms to the side. Lower your pelvis while bending forward."}, {"id": "PIL_STAND_PO_EXE_2", "name": "Oscillation", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal", "Pro"], "pose": "standing", "tip": "Breathe out while leaning to one side, one arm stretched out to the ground and the other one upward."}, {"id": "PIL_STAND_PO_EXE_3", "name": "Standing rudder", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe out while turning your chest and stretching your arms out to the left."}, {"id": "PIL_STAND_PO_EXE_4", "name": "Archery", "type": "Pilates", "where": "Pilates · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe out while folding your right arm toward your chest and stretching the other one out to the side."}, {"id": "PIL_STAND_PO_STRETCH_1_L", "name": "Y-position to the left", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in."}, {"id": "PIL_STAND_PO_STRETCH_1_R", "name": "Y-position to the right", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Newb", "Normal"], "pose": "standing", "tip": "Breathe in."}, {"id": "PIL_STAND_PO_STRETCH_2_L", "name": "Stretching of the fan (left side)", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, legs apart."}, {"id": "PIL_STAND_PO_STRETCH_2_R", "name": "Stretching of the fan (right side)", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, legs apart."}, {"id": "PIL_STAND_PO_STRETCH_3", "name": "Upright W spread", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal", "Pro"], "pose": "standing", "tip": "Breathe in, legs apart."}, {"id": "PIL_STAND_PO_STRETCH_4_L", "name": "Side stretching left leg", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, legs apart."}, {"id": "PIL_STAND_PO_STRETCH_4_R", "name": "Side stretching right leg", "type": "Suppleness", "where": "Suppleness · standing", "levels": ["Normal"], "pose": "standing", "tip": "Breathe in, legs apart."}];
+const GROUPS = [
+  ["Intro", "Breathing intro", "The “Simple breathing” intro at the start of every relaxation part, picked at random. Counts as Breath."],
+  ["Breath · standing", "Breath sessions", "Only under Peace and calm or An active and balanced life. Always standing."],
+  ["Pilates · standing", "Pilates, standing", "Any goal."],
+  ["Pilates · standing or floor", "Pilates, standing or floor", "Any goal; turns up in both positions."],
+  ["Pilates · floor", "Pilates, floor", "Any goal."],
+  ["Suppleness · standing", "Suppleness, standing", "Only under Lose weight (its 2nd session of every 4)."],
+  ["Suppleness · floor", "Suppleness, floor", "Only under Lose weight (its 4th session of every 4)."]
+];
+const TOTAL = {Pilates: 61, Breath: 22, Suppleness: 46};
+const LV = ["Newb", "Normal", "Pro"], LVS = {Newb: "N", Normal: "Nm", Pro: "P"};
+const KEY = "mbc3-relax-done-v1";
+let done = new Set(), filt = {q: "", lv: "", show: "all"}, mode = "local", dbRef = null;
+const $ = id => document.getElementById(id);
+
+function readLocal() { try { const v = JSON.parse(localStorage.getItem(KEY) || "[]"); return new Set(v.filter(x => DATA.some(d => d.id === x))); } catch (e) { return new Set(); } }
+function writeLocal() { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} }
+
+function encode() {
+  const bytes = new Uint8Array(Math.ceil(DATA.length / 8));
+  DATA.forEach((d, i) => { if (done.has(d.id)) bytes[i >> 3] |= 1 << (i & 7); });
+  return "MBC3-" + btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function decode(s) {
+  const m = s.trim().match(/^MBC3-([A-Za-z0-9_-]+)$/);
+  if (!m) return null;
+  let b64 = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b64.length % 4) b64 += "=";
+  let raw; try { raw = atob(b64); } catch (e) { return null; }
+  if (raw.length !== Math.ceil(DATA.length / 8)) return null;
+  const out = new Set();
+  DATA.forEach((d, i) => { if (raw.charCodeAt(i >> 3) & (1 << (i & 7))) out.add(d.id); });
+  return out;
+}
+
+function counts() {
+  const c = {Pilates: 0, Breath: 0, Suppleness: 0};
+  DATA.forEach(d => { if (done.has(d.id)) c[d.type]++; });
+  return c;
+}
+function renderMeters() {
+  const c = counts(), all = c.Pilates + c.Breath + c.Suppleness;
+  const set = (k, n, t) => { $("n-" + k).textContent = n + "/" + t; $("f-" + k).style.width = (100 * n / t) + "%"; };
+  set("pil", c.Pilates, 61); set("bre", c.Breath, 22); set("sup", c.Suppleness, 46); set("all", all, 129);
+  const ab = $("a-bre"), aa = $("a-all");
+  ab.textContent = c.Breath === 22 ? "Master of Breathing ✓" : "Master of Breathing: " + (22 - c.Breath) + " to go";
+  ab.classList.toggle("got", c.Breath === 22);
+  aa.textContent = all === 129 ? "Master of Relaxation ✓" : "Master of Relaxation: " + (129 - all) + " to go";
+  aa.classList.toggle("got", all === 129);
+}
+
+function matches(d) {
+  if (filt.lv && d.levels.length && !d.levels.includes(filt.lv)) return false;
+  if (filt.show === "todo" && done.has(d.id)) return false;
+  if (filt.q) { const q = filt.q.toLowerCase(); if (![d.name, d.pose, d.tip, d.id].some(x => (x || "").toLowerCase().includes(q))) return false; }
+  return true;
+}
+function renderList() {
+  const host = $("groups"); host.textContent = "";
+  let shown = 0;
+  for (const [key, title, meta] of GROUPS) {
+    const all = DATA.filter(d => d.where === key); if (!all.length) continue;
+    const rows = all.filter(matches);
+    const sec = document.createElement("section"); sec.className = "group";
+    const h = document.createElement("div"); h.className = "ghead";
+    const h2 = document.createElement("h2"); h2.textContent = title;
+    const gm = document.createElement("div"); gm.className = "gmeta";
+    const cnt = document.createElement("span"); cnt.className = "gcount"; cnt.textContent = all.filter(d => done.has(d.id)).length + "/" + all.length;
+    gm.append(cnt, document.createTextNode(" · " + meta));
+    h.append(h2, gm); sec.append(h);
+    if (!rows.length) { const e = document.createElement("div"); e.className = "empty"; e.textContent = "Nothing here matches the filters."; sec.append(e); host.append(sec); continue; }
+    const ul = document.createElement("ul"); ul.className = "rows";
+    rows.sort((a, b) => a.levels.length - b.levels.length || LV.indexOf(a.levels[0]) - LV.indexOf(b.levels[0]) || a.name.localeCompare(b.name));
+    for (const d of rows) {
+      shown++;
+      const li = document.createElement("li"); li.className = "row" + (done.has(d.id) ? " is-done" : "");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.id = "cb-" + d.id; cb.checked = done.has(d.id);
+      cb.addEventListener("change", () => toggle(d.id, cb.checked));
+      const lab = document.createElement("label"); lab.className = "rname"; lab.htmlFor = cb.id; lab.textContent = d.name;
+      if (d.type === "Suppleness" && d.where.startsWith("Pilates")) { const f = document.createElement("span"); f.className = "flag"; f.textContent = "counts as Suppleness"; lab.append(f); }
+      const lv = document.createElement("div"); lv.className = "lv"; lv.setAttribute("aria-label", "Levels: " + (d.levels.join(", ") || "any"));
+      for (const l of LV) { const s = document.createElement("span"); s.textContent = LVS[l]; s.title = l; if (!d.levels.length || d.levels.includes(l)) s.className = "on"; lv.append(s); }
+      const sub = document.createElement("div"); sub.className = "rsub";
+      const pose = document.createElement("span"); pose.textContent = (d.pose ? d.pose.charAt(0).toUpperCase() + d.pose.slice(1) : "") + (d.tip ? " · " : "");
+      const tip = document.createElement("span"); tip.className = "tip"; tip.textContent = d.tip ? "“" + d.tip + "”" : "";
+      const id = document.createElement("div"); id.className = "rid"; id.textContent = d.id;
+      sub.append(pose, tip, id);
+      li.append(cb, lab, lv, sub); ul.append(li);
+    }
+    sec.append(ul); host.append(sec);
+  }
+}
+function render() { renderMeters(); renderList(); }
+
+let writing = false, pending = false, timer = null, dirty = false;
+function scheduleRemote() {
+  return; // no account sync in the standalone version
+  dirty = true; clearTimeout(timer); timer = setTimeout(flush, 700);
+}
+async function flush() {
+  if (writing) { pending = true; return; }
+  writing = true; dirty = false; timer = null;
+  try { await dbRef.set({done: [...done].sort(), updated: Date.now()}); }
+  catch (e) { if (e && e.code === "invalid_argument") { mode = "local"; setStatus(); } }
+  writing = false;
+  if (pending) { pending = false; flush(); }
+}
+function toggle(id, on) {
+  on ? done.add(id) : done.delete(id);
+  writeLocal(); scheduleRemote(); render();
+  const el = $("cb-" + id); if (el) el.focus();
+}
+function setStatus() {
+  $("status").textContent = "";
+  const b = document.createElement("b"); b.textContent = "Your ticks are saved in this browser on this device.";
+  $("status").append(b, document.createTextNode(" Nobody else can see them. Clearing your browser data erases them, so use “Copy progress code” now and then to keep a backup or to move to another device or browser."));
+}
+function say(t) { $("msg").textContent = t; clearTimeout(say.t); say.t = setTimeout(() => $("msg").textContent = "", 5000); }
+
+$("q").addEventListener("input", e => { filt.q = e.target.value.trim(); renderList(); });
+document.querySelectorAll("[data-lv]").forEach(b => b.addEventListener("click", () => { filt.lv = b.dataset.lv; document.querySelectorAll("[data-lv]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderList(); }));
+document.querySelectorAll("[data-show]").forEach(b => b.addEventListener("click", () => { filt.show = b.dataset.show; document.querySelectorAll("[data-show]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderList(); }));
+$("b-copy").addEventListener("click", () => {
+  const code = encode();
+  const fallback = () => { $("import-box").hidden = false; $("code-in").value = code; $("code-in").select(); say("Select-all and copy the code shown below."); };
+  try { navigator.clipboard.writeText(code).then(() => say("Progress code copied (" + done.size + " exercises)."), fallback); } catch (e) { fallback(); }
+});
+$("b-show-import").addEventListener("click", () => { $("import-box").hidden = false; $("code-in").value = ""; $("code-in").focus(); });
+$("b-cancel").addEventListener("click", () => { $("import-box").hidden = true; });
+$("b-import").addEventListener("click", () => {
+  const s = decode($("code-in").value);
+  if (!s) { say("That doesn't look like a code from this page. It should start with MBC3-."); return; }
+  done = s; writeLocal(); scheduleRemote(); render(); $("import-box").hidden = true; say("Loaded " + s.size + " ticked exercises.");
+});
+$("b-clear").addEventListener("click", () => { $("clear-box").hidden = false; });
+$("b-clear-no").addEventListener("click", () => { $("clear-box").hidden = true; });
+$("b-clear-yes").addEventListener("click", () => { done = new Set(); writeLocal(); scheduleRemote(); render(); $("clear-box").hidden = true; say("All ticks cleared."); });
+
+done = readLocal(); setStatus(); render();
+
+</script>
+</body>
+</html>

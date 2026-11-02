@@ -4,6 +4,15 @@ Static analysis of the EUR build (`default.xex` plus its Lua scripts). It covers
 
 All addresses are virtual addresses in the decrypted `default.xex` (base `0x82000000`). Annotated listings are in [`evidence/disassembly.txt`](evidence/disassembly.txt).
 
+## Track your Master of Relaxation progress
+
+**[Open the progress tracker](https://harrisonkeyser.github.io/mbc3-investigation/)**: a checklist of all 129 relaxation exercises. It's grouped by the session type and position that can give you each one, with the levels it appears at, its pose and the coach's instructions, plus progress bars for Master of Breathing and Master of Relaxation.
+
+- Nothing to install or sign up for. Your ticks are saved in your own browser and nobody else sees them.
+- Use **Copy progress code** to back up your ticks or move them to another device or browser, and **Paste a code** to load them.
+- No internet? Download [`docs/index.html`](docs/index.html) (*Download raw file*) and open it in any browser; it works offline.
+- Prefer a spreadsheet? [`docs/relaxation_tracker.csv`](docs/relaxation_tracker.csv) has the same list with a *Done* column. Open it in Excel, or in Google Sheets with *File → Import*.
+
 ## TL;DR
 
 | Problem | What the code shows |
@@ -124,7 +133,10 @@ python3 tools/xexdec_basic.py <game>/default.xex default.pe            # AES ret
 MBC3_PE=default.pe python3 -c "import sys; sys.path.insert(0,'tools'); import disasm_helpers as C; C.prf(0x821ed1a8)"
 python3 scripts/relaxation_coverage.py <game>/Common/Scripts > relaxation_exercises.csv
 python3 scripts/session_plan.py                                        # goal -> session cycle, slider -> levels
+python3 scripts/build_tracker_data.py <game>/Common evidence/relaxation_exercises.csv docs/   # tracker data + CSV
 ```
+
+The tracker (`docs/index.html`) is one self-contained page with the output of `build_tracker_data.py` pasted in as `const DATA = ...`. It's served by GitHub Pages from the `docs/` folder.
 
 No game files are included in this repo.
 
