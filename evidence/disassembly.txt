@@ -1210,3 +1210,764 @@ N. Main-loop save completion: only finishes the save when the job's done flag is
 8224d95c: 38210070  addi     r1, r1, 0x70
 8224d960: 486ece8c  b        0x8293a7ec
 
+
+====================================================================================================
+O. Relaxation session builder 0x821e5260: level, half-step split, session type -> muscle groups, position
+====================================================================================================
+# r31 = profile, r29 = SessionPhase (4 Relaxation / 5 OvertimeRelaxation).
+# Level object @+0x36f508 (value @+0x36f50c = 0/10/20). Half-step flag byte @+0x36f511 (0 or 5).
+# Relaxation exercise type object @+0x36f66c (3 Pilates, 4 Breath, 5 Suppleness). Position index @+0x36f684 (0 Stand, 1 Floor).
+# Every block is built by 0x821e2b88(group, level, position) which calls the combo picker 0x821e6270 (section I).
+
+# --- harder level = (L < 20) ? L + 10 : L   (stored at sp+0x7c)
+821e53cc: 3fdf0037  addis    r30, r31, 0x37
+821e53d0: 6152bdcb  ori      r18, r10, 0xbdcb
+821e53d4: 3bdef508  addi     r30, r30, -0xaf8
+821e53d8: 7d2b9214  add      r9, r11, r18
+821e53dc: 7fc3f378  mr       r3, r30
+821e53e0: 5528103a  slwi     r8, r9, 2
+821e53e4: 7fc8fd2e  stfsx    f30, r8, r31
+821e53e8: 480ea749  bl       0x822cfb30
+821e53ec: 2b030000  cmplwi   cr6, r3, 0
+821e53f0: 419a0010  beq      cr6, 0x821e5400
+821e53f4: 81630000  lwz      r11, 0(r3)
+821e53f8: 2f0b0014  cmpwi    cr6, r11, 0x14
+821e53fc: 4098002c  bge      cr6, 0x821e5428
+821e5400: 7fc3f378  mr       r3, r30
+821e5404: 480ea72d  bl       0x822cfb30
+821e5408: 2b030000  cmplwi   cr6, r3, 0
+821e540c: 419a0010  beq      cr6, 0x821e541c
+821e5410: 81630000  lwz      r11, 0(r3)
+821e5414: 388b000a  addi     r4, r11, 0xa
+821e5418: 4800002c  b        0x821e5444
+821e541c: 3960ffff  li       r11, -1
+821e5420: 388b000a  addi     r4, r11, 0xa
+821e5424: 48000020  b        0x821e5444
+821e5428: 7fc3f378  mr       r3, r30
+821e542c: 480ea705  bl       0x822cfb30
+821e5430: 2b030000  cmplwi   cr6, r3, 0
+821e5434: 419a000c  beq      cr6, 0x821e5440
+821e5438: 80830000  lwz      r4, 0(r3)
+821e543c: 48000008  b        0x821e5444
+821e5440: 3880ffff  li       r4, -1
+821e5444: 3d608216  lis      r11, -0x7dea
+821e5448: 39400000  li       r10, 0
+821e544c: 3acb0820  addi     r22, r11, 0x820
+821e5450: 9141007c  stw      r10, 0x7c(r1)
+821e5454: 38610078  addi     r3, r1, 0x78
+821e5458: 92c10078  stw      r22, 0x78(r1)
+821e545c: 480ea7dd  bl       0x822cfc38
+
+# --- time target for the first part = duration * flag / 10  (flag 5 -> half the relaxation time)
+821e54b0: 3ebf0037  addis    r21, r31, 0x37
+821e54b4: 38a10060  addi     r5, r1, 0x60
+821e54b8: 38810090  addi     r4, r1, 0x90
+821e54bc: 7fe3fb78  mr       r3, r31
+821e54c0: 3ab5f511  addi     r21, r21, -0xaef
+821e54c4: 48000915  bl       0x821e5dd8
+821e54c8: 89750000  lbz      r11, 0(r21)
+821e54cc: 546a043e  clrlwi   r10, r3, 0x10
+821e54d0: 3920000a  li       r9, 0xa
+821e54d4: 7d0a59d6  mullw    r8, r10, r11
+821e54d8: 7ce84bd6  divw     r7, r8, r9
+821e54dc: 3cc0000d  lis      r6, 0xd
+821e54e0: 7ce507b4  extsw    r5, r7
+821e54e4: 60cebdb3  ori      r14, r6, 0xbdb3
+821e54e8: f8a100a0  std      r5, 0xa0(r1)
+821e54ec: c80100a0  lfd      f0, 0xa0(r1)
+821e54f0: fda0069c  fcfid    f13, f0
+821e54f4: 7c9e7214  add      r4, r30, r14
+821e54f8: 548b103a  slwi     r11, r4, 2
+821e54fc: fd806818  frsp     f12, f13
+821e5500: 3f9f0037  addis    r28, r31, 0x37
+821e5504: 3b9cf66c  addi     r28, r28, -0x994
+821e5508: 7d8bfd2e  stfsx    f12, r11, r31
+
+# --- type == Pilates (3) ? Pilates path : 0x821e5b54
+821e550c: 7f83e378  mr       r3, r28
+821e5510: 480ea621  bl       0x822cfb30
+821e5514: 81210058  lwz      r9, 0x58(r1)
+821e5518: 3d000036  lis      r8, 0x36
+821e551c: 3d608216  lis      r11, -0x7dea
+821e5520: 3d408216  lis      r10, -0x7dea
+821e5524: 6111f684  ori      r17, r8, 0xf684
+821e5528: c3e9036c  lfs      f31, 0x36c(r9)
+821e552c: 2b030000  cmplwi   cr6, r3, 0
+821e5530: 3aeb07e4  addi     r23, r11, 0x7e4
+821e5534: 3bca07f0  addi     r30, r10, 0x7f0
+821e5538: 419a00b8  beq      cr6, 0x821e55f0
+821e553c: 81630000  lwz      r11, 0(r3)
+821e5540: 2f0b0003  cmpwi    cr6, r11, 3
+821e5544: 409a00ac  bne      cr6, 0x821e55f0
+821e5728: 480ea409  bl       0x822cfb30
+821e572c: 2b030000  cmplwi   cr6, r3, 0
+821e5730: 419a0424  beq      cr6, 0x821e5b54
+821e5734: 81630000  lwz      r11, 0(r3)
+821e5738: 2f0b0003  cmpwi    cr6, r11, 3
+821e573c: 409a0418  bne      cr6, 0x821e5b54
+821e5740: 7fa3eb78  mr       r3, r29
+
+# --- Pilates path, first part (only if flag != 0): blocks at the harder level, groups alternate Postural(11)/Support(12)
+821e57c0: 89350000  lbz      r9, 0(r21)
+821e57c4: 3d608214  lis      r11, -0x7dec
+821e57c8: 9061006c  stw      r3, 0x6c(r1)
+821e57cc: 2b090000  cmplwi   cr6, r9, 0
+821e57d0: 3a6b2e5c  addi     r19, r11, 0x2e5c
+821e57d4: 419a00dc  beq      cr6, 0x821e58b0
+821e57d8: 7f9f8a14  add      r28, r31, r17
+821e57dc: 817c0000  lwz      r11, 0(r28)
+821e57e0: 39410098  addi     r10, r1, 0x98
+821e57e4: 811d0004  lwz      r8, 4(r29)
+821e57e8: 39210050  addi     r9, r1, 0x50
+821e57ec: 8341007c  lwz      r26, 0x7c(r1)
+821e57f0: 38e10090  addi     r7, r1, 0x90
+821e57f4: 82a1006c  lwz      r21, 0x6c(r1)
+821e57f8: 38c10060  addi     r6, r1, 0x60
+821e57fc: 92e10098  stw      r23, 0x98(r1)
+821e5800: 7f25cb78  mr       r5, r25
+821e5804: 92c10090  stw      r22, 0x90(r1)
+821e5808: 388100a0  addi     r4, r1, 0xa0
+821e580c: 9161009c  stw      r11, 0x9c(r1)
+821e5810: 7fe3fb78  mr       r3, r31
+821e5814: 910100a4  stw      r8, 0xa4(r1)
+821e5818: fc20f090  fmr      f1, f30
+821e581c: 93410094  stw      r26, 0x94(r1)
+821e5820: 93c10060  stw      r30, 0x60(r1)
+821e5824: 92a10064  stw      r21, 0x64(r1)
+821e5828: 930100a0  stw      r24, 0xa0(r1)
+821e582c: 4bffd35d  bl       0x821e2b88
+821e5830: 80e1006c  lwz      r7, 0x6c(r1)
+821e5834: 80c10068  lwz      r6, 0x68(r1)
+821e5838: 38610068  addi     r3, r1, 0x68
+821e583c: 38a70001  addi     r5, r7, 1
+821e5840: 90a1006c  stw      r5, 0x6c(r1)
+821e5844: 80860008  lwz      r4, 8(r6)
+821e5848: 7c8903a6  mtctr    r4
+821e584c: 4e800421  bctrl    
+821e5850: 8161006c  lwz      r11, 0x6c(r1)
+821e5854: 7c635810  subfc    r3, r3, r11
+821e5858: 38610068  addi     r3, r1, 0x68
+821e585c: 7d2a5110  subfe    r9, r10, r10
+821e5860: 7d285838  and      r8, r9, r11
+821e5864: 9101006c  stw      r8, 0x6c(r1)
+821e5868: 480ea2c9  bl       0x822cfb30
+821e586c: 2b030000  cmplwi   cr6, r3, 0
+821e5870: 419a0030  beq      cr6, 0x821e58a0
+821e5874: 81630000  lwz      r11, 0(r3)
+821e5878: 2f0b000c  cmpwi    cr6, r11, 0xc
+821e587c: 40990024  ble      cr6, 0x821e58a0
+821e5880: 93c10080  stw      r30, 0x80(r1)
+821e5884: 3880000b  li       r4, 0xb
+821e5888: 93610084  stw      r27, 0x84(r1)
+821e588c: 38610080  addi     r3, r1, 0x80
+821e5890: 480ea3a9  bl       0x822cfc38
+821e5894: 92610080  stw      r19, 0x80(r1)
+821e5898: 90610084  stw      r3, 0x84(r1)
+821e589c: 9061006c  stw      r3, 0x6c(r1)
+821e58a0: 89610050  lbz      r11, 0x50(r1)
+821e58a4: 7d6a5b78  mr       r10, r11
+821e58a8: 2b0b0000  cmplwi   cr6, r11, 0
+821e58ac: 419aff30  beq      cr6, 0x821e57dc
+
+# --- then: time target reset to the full duration, remaining blocks at the base level L (@+0x36f50c)
+821e58b0: 81700000  lwz      r11, 0(r16)
+821e58b4: 3d400036  lis      r10, 0x36
+821e58b8: 813d0004  lwz      r9, 4(r29)
+821e58bc: 3aa00000  li       r21, 0
+821e58c0: 91e100a0  stw      r15, 0xa0(r1)
+821e58c4: 6148f50c  ori      r8, r10, 0xf50c
+821e58c8: 93010098  stw      r24, 0x98(r1)
+821e58cc: 7fa3eb78  mr       r3, r29
+821e58d0: 9aa10050  stb      r21, 0x50(r1)
+821e58d4: 916100a4  stw      r11, 0xa4(r1)
+821e58d8: 9121009c  stw      r9, 0x9c(r1)
+821e58dc: 7f7f402e  lwzx     r27, r31, r8
+821e58e0: 480ea251  bl       0x822cfb30
+821e58e4: 2b030000  cmplwi   cr6, r3, 0
+821e58e8: 419a000c  beq      cr6, 0x821e58f4
+821e58ec: 83830000  lwz      r28, 0(r3)
+821e58f0: 48000008  b        0x821e58f8
+821e58f4: 3b80ffff  li       r28, -1
+821e58f8: 38a100a0  addi     r5, r1, 0xa0
+821e58fc: 38810098  addi     r4, r1, 0x98
+821e5900: 7fe3fb78  mr       r3, r31
+821e5904: 480004d5  bl       0x821e5dd8
+821e5908: 5467043e  clrlwi   r7, r3, 0x10
+821e590c: 7d5c7214  add      r10, r28, r14
+821e5910: 8101006c  lwz      r8, 0x6c(r1)
+821e5914: f8e10098  std      r7, 0x98(r1)
+821e5918: c8010098  lfd      f0, 0x98(r1)
+821e591c: fda0069c  fcfid    f13, f0
+821e5920: 5546103a  slwi     r6, r10, 2
+821e5924: fd806818  frsp     f12, f13
+821e5928: 7d86fd2e  stfsx    f12, r6, r31
+821e592c: 7d7f882e  lwzx     r11, r31, r17
+
+# --- non-Pilates path: group = BreathMove(14); if type == Suppleness(5) group = Suppleness(15)
+821e5b54: 3d608216  lis      r11, -0x7dea
+821e5b58: 3bc00000  li       r30, 0
+821e5b5c: 3b6b07d8  addi     r27, r11, 0x7d8
+821e5b60: 93c10074  stw      r30, 0x74(r1)
+821e5b64: 3880000e  li       r4, 0xe
+821e5b68: 93610070  stw      r27, 0x70(r1)
+821e5b6c: 38610070  addi     r3, r1, 0x70
+821e5b70: 480ea0c9  bl       0x822cfc38
+821e5b74: 90610074  stw      r3, 0x74(r1)
+821e5b78: 7f83e378  mr       r3, r28
+821e5b7c: 480e9fb5  bl       0x822cfb30
+821e5b80: 3d608214  lis      r11, -0x7dec
+821e5b84: 2b030000  cmplwi   cr6, r3, 0
+821e5b88: 3a6b2e5c  addi     r19, r11, 0x2e5c
+821e5b8c: 419a009c  beq      cr6, 0x821e5c28
+821e5b90: 81630000  lwz      r11, 0(r3)
+821e5b94: 2f0b0004  cmpwi    cr6, r11, 4
+821e5b98: 419a0030  beq      cr6, 0x821e5bc8
+821e5b9c: 2f0b0005  cmpwi    cr6, r11, 5
+821e5ba0: 409a0088  bne      cr6, 0x821e5c28
+821e5ba4: 3960000f  li       r11, 0xf
+821e5ba8: 38810060  addi     r4, r1, 0x60
+821e5bac: 91610060  stw      r11, 0x60(r1)
+821e5bb0: 386100b8  addi     r3, r1, 0xb8
+821e5bb4: 4bff5345  bl       0x821daef8
+821e5bb8: 814100bc  lwz      r10, 0xbc(r1)
+821e5bbc: 926100b8  stw      r19, 0xb8(r1)
+821e5bc0: 91410074  stw      r10, 0x74(r1)
+821e5bc4: 48000064  b        0x821e5c28
+
+# --- first part at the harder level (only if flag != 0)
+821e5c28: 89750000  lbz      r11, 0(r21)
+821e5c2c: 9bc10050  stb      r30, 0x50(r1)
+821e5c30: 2b0b0000  cmplwi   cr6, r11, 0
+821e5c34: 419a006c  beq      cr6, 0x821e5ca0
+821e5c38: 7fdf8a14  add      r30, r31, r17
+821e5c3c: 817e0000  lwz      r11, 0(r30)
+821e5c40: 394100a0  addi     r10, r1, 0xa0
+821e5c44: 811d0004  lwz      r8, 4(r29)
+821e5c48: 39210050  addi     r9, r1, 0x50
+821e5c4c: 8381007c  lwz      r28, 0x7c(r1)
+821e5c50: 38e10098  addi     r7, r1, 0x98
+821e5c54: 83410074  lwz      r26, 0x74(r1)
+821e5c58: 38c10090  addi     r6, r1, 0x90
+821e5c5c: 92e100a0  stw      r23, 0xa0(r1)
+821e5c60: 7f25cb78  mr       r5, r25
+821e5c64: 92c10098  stw      r22, 0x98(r1)
+821e5c68: 38810060  addi     r4, r1, 0x60
+821e5c6c: 916100a4  stw      r11, 0xa4(r1)
+821e5c70: 7fe3fb78  mr       r3, r31
+821e5c74: 91010064  stw      r8, 0x64(r1)
+821e5c78: fc20f090  fmr      f1, f30
+821e5c7c: 9381009c  stw      r28, 0x9c(r1)
+821e5c80: 93610090  stw      r27, 0x90(r1)
+821e5c84: 93410094  stw      r26, 0x94(r1)
+821e5c88: 93010060  stw      r24, 0x60(r1)
+821e5c8c: 4bffcefd  bl       0x821e2b88
+821e5c90: 88e10050  lbz      r7, 0x50(r1)
+821e5c94: 7ce63b78  mr       r6, r7
+821e5c98: 2b070000  cmplwi   cr6, r7, 0
+821e5c9c: 419affa0  beq      cr6, 0x821e5c3c
+
+# --- rest at the base level
+821e5ca0: 3d600036  lis      r11, 0x36
+821e5ca4: 39400000  li       r10, 0
+821e5ca8: 6169f50c  ori      r9, r11, 0xf50c
+821e5cac: 7fa3eb78  mr       r3, r29
+821e5cb0: 99410050  stb      r10, 0x50(r1)
+821e5cb4: 7f9f482e  lwzx     r28, r31, r9
+821e5cb8: 480e9e79  bl       0x822cfb30
+821e5cbc: 2b030000  cmplwi   cr6, r3, 0
+821e5cc0: 419a000c  beq      cr6, 0x821e5ccc
+821e5cc4: 81630000  lwz      r11, 0(r3)
+821e5cc8: 48000008  b        0x821e5cd0
+821e5ccc: 3960ffff  li       r11, -1
+821e5cd0: 3d400036  lis      r10, 0x36
+821e5cd4: 83c10058  lwz      r30, 0x58(r1)
+821e5cd8: 7d0b7214  add      r8, r11, r14
+821e5cdc: 81210074  lwz      r9, 0x74(r1)
+821e5ce0: 6146f674  ori      r6, r10, 0xf674
+821e5ce4: 92e10060  stw      r23, 0x60(r1)
+821e5ce8: 550b103a  slwi     r11, r8, 2
+821e5cec: 92c100a0  stw      r22, 0xa0(r1)
+821e5cf0: 938100a4  stw      r28, 0xa4(r1)
+821e5cf4: 39410060  addi     r10, r1, 0x60
+821e5cf8: 93610098  stw      r27, 0x98(r1)
+821e5cfc: 38e100a0  addi     r7, r1, 0xa0
+821e5d00: 9121009c  stw      r9, 0x9c(r1)
+821e5d04: 39210050  addi     r9, r1, 0x50
+821e5d08: 7d1f322e  lhzx     r8, r31, r6
+821e5d0c: 38c10098  addi     r6, r1, 0x98
+821e5d10: 93010090  stw      r24, 0x90(r1)
+821e5d14: 7f25cb78  mr       r5, r25
+821e5d18: 7d0307b4  extsw    r3, r8
+821e5d1c: c03e0014  lfs      f1, 0x14(r30)
+821e5d20: 38810090  addi     r4, r1, 0x90
+821e5d24: f8610058  std      r3, 0x58(r1)
+821e5d28: c8010058  lfd      f0, 0x58(r1)
+821e5d2c: fda0069c  fcfid    f13, f0
+821e5d30: 7fe3fb78  mr       r3, r31
+821e5d34: fd806818  frsp     f12, f13
+821e5d38: 7d8bfd2e  stfsx    f12, r11, r31
+821e5d3c: 7d1f882e  lwzx     r8, r31, r17
+821e5d40: 7fdf8a14  add      r30, r31, r17
+821e5d44: 817d0004  lwz      r11, 4(r29)
+821e5d48: 91610094  stw      r11, 0x94(r1)
+821e5d4c: 91010064  stw      r8, 0x64(r1)
+821e5d50: 4bffce39  bl       0x821e2b88
+
+====================================================================================================
+P. SetRelaxUserLevel 0x821ec648: slider value v (0,5,10,15,20) -> level = v - v%10, half-step flag = v%10
+====================================================================================================
+# Stores v at +0x1204b5 (saved), flag at +0x36f511, level index at +0x36f50c. Called at session start by 0x821e9688.
+821ec648: 7d8802a6  mflr     r12
+821ec64c: 9181fff8  stw      r12, -8(r1)
+821ec650: fbc1ffe8  std      r30, -0x18(r1)
+821ec654: fbe1fff0  std      r31, -0x10(r1)
+821ec658: 9421ff90  stwu     r1, -0x70(r1)
+821ec65c: 548b063e  clrlwi   r11, r4, 0x18
+821ec660: 7c7f1b78  mr       r31, r3
+821ec664: 7c9e2378  mr       r30, r4
+821ec668: 2b0b0014  cmplwi   cr6, r11, 0x14
+821ec66c: 40990008  ble      cr6, 0x821ec674
+821ec670: 3bc00014  li       r30, 0x14
+821ec674: 3d606666  lis      r11, 0x6666
+821ec678: 57c9063e  clrlwi   r9, r30, 0x18
+821ec67c: 61686667  ori      r8, r11, 0x6667
+821ec680: 3ce00036  lis      r7, 0x36
+821ec684: 7cc94096  mulhw    r6, r9, r8
+821ec688: 7ccb1670  srawi    r11, r6, 2
+821ec68c: 60e5f511  ori      r5, r7, 0xf511
+821ec690: 556a0ffe  srwi     r10, r11, 0x1f
+821ec694: 3c808216  lis      r4, -0x7dea
+821ec698: 7d6b5214  add      r11, r11, r10
+821ec69c: 38640820  addi     r3, r4, 0x820
+821ec6a0: 556a103a  slwi     r10, r11, 2
+821ec6a4: 39000000  li       r8, 0
+821ec6a8: 90610050  stw      r3, 0x50(r1)
+821ec6ac: 7ceb5214  add      r7, r11, r10
+821ec6b0: 91010054  stw      r8, 0x54(r1)
+821ec6b4: 38610050  addi     r3, r1, 0x50
+821ec6b8: 54e6083c  slwi     r6, r7, 1
+821ec6bc: 7c864850  subf     r4, r6, r9
+821ec6c0: 548b063e  clrlwi   r11, r4, 0x18
+821ec6c4: 7d7f29ae  stbx     r11, r31, r5
+821ec6c8: 7c8b4850  subf     r4, r11, r9
+821ec6cc: 480e356d  bl       0x822cfc38
+821ec6d0: 3d400036  lis      r10, 0x36
+821ec6d4: 3d200012  lis      r9, 0x12
+821ec6d8: 6148f50c  ori      r8, r10, 0xf50c
+821ec6dc: 612704b5  ori      r7, r9, 0x4b5
+821ec6e0: 7c7f412e  stwx     r3, r31, r8
+821ec6e4: 7fdf39ae  stbx     r30, r31, r7
+821ec6e8: 38210070  addi     r1, r1, 0x70
+821ec6ec: 8181fff8  lwz      r12, -8(r1)
+821ec6f0: 7d8803a6  mtlr     r12
+821ec6f4: ebc1ffe8  ld       r30, -0x18(r1)
+821ec6f8: ebe1fff0  ld       r31, -0x10(r1)
+821ec6fc: 4e800020  blr      
+
+====================================================================================================
+Q. Program planner 0x821e98f0(date, k): relaxation type (+0xe) and position (+0xf) of the k-th session of the program
+====================================================================================================
+# r3 = day record (+2) from 0x821f4a90, r11 = k (0-based session number), goal byte @+0x120406 (1..4).
+# Defaults first: +0xd fitness type = 10 (None), +0xe relaxation type = 10 (None), +0xf position = 2 (Any).
+# Goal 1 (0x821e999c): type = k even ? Pilates(3) : Suppleness(5); position = k%4 in {0,1} ? Stand : Floor
+# Goal 2 (0x821e99f4): type = k even ? Breath(4) : Pilates(3);    position = k%4 == 3 ? Floor : Stand
+# Goal 3 (0x821e9a60): type = k even ? Pilates(3) : Breath(4);    position = k%4 == 2 ? Floor : Stand
+# Goal 4 (0x821e9aec): type = Pilates(3);                         position = k odd ? Floor : Stand
+# Caller 0x821e9b70 walks the program calendar week by week and passes k = 0,1,2,... for every planned session.
+821e98f0: 7d8802a6  mflr     r12
+821e98f4: 9181fff8  stw      r12, -8(r1)
+821e98f8: fbc1ffe8  std      r30, -0x18(r1)
+821e98fc: fbe1fff0  std      r31, -0x10(r1)
+821e9900: 9421ff90  stwu     r1, -0x70(r1)
+821e9904: 7c7f1b78  mr       r31, r3
+821e9908: 38630408  addi     r3, r3, 0x408
+821e990c: 7cbe2b78  mr       r30, r5
+821e9910: 4800b181  bl       0x821f4a90
+821e9914: 3960000a  li       r11, 0xa
+821e9918: 89230010  lbz      r9, 0x10(r3)
+821e991c: 39400000  li       r10, 0
+821e9920: 9963000d  stb      r11, 0xd(r3)
+821e9924: 39000002  li       r8, 2
+821e9928: 9963000e  stb      r11, 0xe(r3)
+821e992c: 38a00005  li       r5, 5
+821e9930: 3ce00012  lis      r7, 0x12
+821e9934: b1430006  sth      r10, 6(r3)
+821e9938: 552606be  clrlwi   r6, r9, 0x1a
+821e993c: b1430008  sth      r10, 8(r3)
+821e9940: 57cb063e  clrlwi   r11, r30, 0x18
+821e9944: b143000a  sth      r10, 0xa(r3)
+821e9948: 60e704b2  ori      r7, r7, 0x4b2
+821e994c: 98c30010  stb      r6, 0x10(r3)
+821e9950: 2b0b0000  cmplwi   cr6, r11, 0
+821e9954: 9903000f  stb      r8, 0xf(r3)
+821e9958: 98a3000c  stb      r5, 0xc(r3)
+821e995c: 409a000c  bne      cr6, 0x821e9968
+821e9960: 7d3f3a2e  lhzx     r9, r31, r7
+821e9964: b1230006  sth      r9, 6(r3)
+821e9968: 3d200012  lis      r9, 0x12
+821e996c: 3cc00012  lis      r6, 0x12
+821e9970: 61240406  ori      r4, r9, 0x406
+821e9974: 60c604b5  ori      r6, r6, 0x4b5
+821e9978: 7d3f20ae  lbzx     r9, r31, r4
+821e997c: 3929ffff  addi     r9, r9, -1
+821e9980: 2b090003  cmplwi   cr6, r9, 3
+821e9984: 419901a0  bgt      cr6, 0x821e9b24
+821e9988: 7d2903a6  mtctr    r9
+821e998c: 2f090000  cmpwi    cr6, r9, 0
+821e9990: 405a0064  bdzf     4*cr6+eq, 0x821e99f4
+821e9994: 405a00cc  bdzf     4*cr6+eq, 0x821e9a60
+821e9998: 409a0154  bne      cr6, 0x821e9aec
+821e999c: 7d690e70  srawi    r9, r11, 1
+821e99a0: 7d090194  addze    r8, r9
+821e99a4: 5504083c  slwi     r4, r8, 1
+821e99a8: 7d245850  subf     r9, r4, r11
+821e99ac: 21090000  subfic   r8, r9, 0
+821e99b0: 7d240034  cntlzw   r4, r9
+821e99b4: 7d284110  subfe    r9, r8, r8
+821e99b8: 7d681670  srawi    r8, r11, 2
+821e99bc: 552907bc  rlwinm   r9, r9, 0, 0x1e, 0x1e
+821e99c0: 7d080194  addze    r8, r8
+821e99c4: 39290003  addi     r9, r9, 3
+821e99c8: 5508103a  slwi     r8, r8, 2
+821e99cc: 5484dffe  rlwinm   r4, r4, 0x1b, 0x1f, 0x1f
+821e99d0: 9923000e  stb      r9, 0xe(r3)
+821e99d4: 7d285851  subf.    r9, r8, r11
+821e99d8: 9883000d  stb      r4, 0xd(r3)
+821e99dc: 41820010  beq      0x821e99ec
+821e99e0: 2f090001  cmpwi    cr6, r9, 1
+821e99e4: 419a0008  beq      cr6, 0x821e99ec
+821e99e8: 39400001  li       r10, 1
+821e99ec: 9943000f  stb      r10, 0xf(r3)
+821e99f0: 48000124  b        0x821e9b14
+821e99f4: 7d6a0e70  srawi    r10, r11, 1
+821e99f8: 2b0b0000  cmplwi   cr6, r11, 0
+821e99fc: 7d2a0194  addze    r9, r10
+821e9a00: 5527083c  slwi     r7, r9, 1
+821e9a04: 7c875850  subf     r4, r7, r11
+821e9a08: 3144ffff  addic    r10, r4, -1
+821e9a0c: 7c870034  cntlzw   r7, r4
+821e9a10: 7c894910  subfe    r4, r9, r9
+821e9a14: 7d691670  srawi    r9, r11, 2
+821e9a18: 54eadffe  rlwinm   r10, r7, 0x1b, 0x1f, 0x1f
+821e9a1c: 7ce90194  addze    r7, r9
+821e9a20: 394a0003  addi     r10, r10, 3
+821e9a24: 54e9103a  slwi     r9, r7, 2
+821e9a28: 9943000e  stb      r10, 0xe(r3)
+821e9a2c: 7c884038  and      r8, r4, r8
+821e9a30: 7d495850  subf     r10, r9, r11
+821e9a34: 9903000d  stb      r8, 0xd(r3)
+821e9a38: 38eafffd  addi     r7, r10, -3
+821e9a3c: 7ce40034  cntlzw   r4, r7
+821e9a40: 548adffe  rlwinm   r10, r4, 0x1b, 0x1f, 0x1f
+821e9a44: 9943000f  stb      r10, 0xf(r3)
+821e9a48: 409a010c  bne      cr6, 0x821e9b54
+821e9a4c: 7d5f30ae  lbzx     r10, r31, r6
+821e9a50: 7d4a2bd6  divw     r10, r10, r5
+821e9a54: 392a0001  addi     r9, r10, 1
+821e9a58: b1230006  sth      r9, 6(r3)
+821e9a5c: 480000c8  b        0x821e9b24
+821e9a60: 3d405555  lis      r10, 0x5555
+821e9a64: 7d690e70  srawi    r9, r11, 1
+821e9a68: 61485556  ori      r8, r10, 0x5556
+821e9a6c: 7ce90194  addze    r7, r9
+821e9a70: 7d4b4096  mulhw    r10, r11, r8
+821e9a74: 55490ffe  srwi     r9, r10, 0x1f
+821e9a78: 7d641670  srawi    r4, r11, 2
+821e9a7c: 7d4a4a14  add      r10, r10, r9
+821e9a80: 54e8083c  slwi     r8, r7, 1
+821e9a84: 7ce40194  addze    r7, r4
+821e9a88: 5549083c  slwi     r9, r10, 1
+821e9a8c: 7c885850  subf     r4, r8, r11
+821e9a90: 54e8103a  slwi     r8, r7, 2
+821e9a94: 7cea4a14  add      r7, r10, r9
+821e9a98: 7d485850  subf     r10, r8, r11
+821e9a9c: 7c840034  cntlzw   r4, r4
+821e9aa0: 7d075850  subf     r8, r7, r11
+821e9aa4: 5487dffe  rlwinm   r7, r4, 0x1b, 0x1f, 0x1f
+821e9aa8: 392afffe  addi     r9, r10, -2
+821e9aac: 7d040034  cntlzw   r4, r8
+821e9ab0: 68ea0001  xori     r10, r7, 1
+821e9ab4: 7d290034  cntlzw   r9, r9
+821e9ab8: 5488dffe  rlwinm   r8, r4, 0x1b, 0x1f, 0x1f
+821e9abc: 38ea0003  addi     r7, r10, 3
+821e9ac0: 5524dffe  rlwinm   r4, r9, 0x1b, 0x1f, 0x1f
+821e9ac4: 9903000d  stb      r8, 0xd(r3)
+821e9ac8: 98e3000e  stb      r7, 0xe(r3)
+821e9acc: 2b0b0000  cmplwi   cr6, r11, 0
+821e9ad0: 9883000f  stb      r4, 0xf(r3)
+821e9ad4: 409a0080  bne      cr6, 0x821e9b54
+821e9ad8: 7d5f30ae  lbzx     r10, r31, r6
+821e9adc: 7d4a2bd6  divw     r10, r10, r5
+821e9ae0: 392a0001  addi     r9, r10, 1
+821e9ae4: b1230006  sth      r9, 6(r3)
+821e9ae8: 4800003c  b        0x821e9b24
+821e9aec: 7d690e70  srawi    r9, r11, 1
+821e9af0: 9943000d  stb      r10, 0xd(r3)
+821e9af4: 39000003  li       r8, 3
+821e9af8: 7c890194  addze    r4, r9
+821e9afc: 9903000e  stb      r8, 0xe(r3)
+821e9b00: 548a083c  slwi     r10, r4, 1
+821e9b04: 7d2a5850  subf     r9, r10, r11
+821e9b08: 3109ffff  addic    r8, r9, -1
+821e9b0c: 7c884910  subfe    r4, r8, r9
+821e9b10: 9883000f  stb      r4, 0xf(r3)
+821e9b14: 2b0b0000  cmplwi   cr6, r11, 0
+821e9b18: 409a003c  bne      cr6, 0x821e9b54
+821e9b1c: 7d5f3a2e  lhzx     r10, r31, r7
+821e9b20: b1430006  sth      r10, 6(r3)
+
+====================================================================================================
+R. Session start 0x821e7060: copy relaxation type/position for today from the day record; None or Any -> Pilates/Stand
+====================================================================================================
+# TodaySessionState object @+0x36f4c8 (0 Programed, 1 Missed, 2 Advanced, 3 NoSession, 4 ProgramEnd).
+# State 3 (no session planned today): uses the NEXT day record (the next planned session). Others: today's record.
+# Type -> @+0x36f670, position -> @+0x36f684, relaxation duration (min*60) -> @+0x36f674.
+821e7060: 7d8802a6  mflr     r12
+821e7064: 48753725  bl       0x8293a788
+821e7068: 9421ff20  stwu     r1, -0xe0(r1)
+821e706c: 7c7f1b78  mr       r31, r3
+821e7070: 38630408  addi     r3, r3, 0x408
+821e7074: 3c9f0037  addis    r4, r31, 0x37
+821e7078: 3884f0d0  addi     r4, r4, -0xf30
+821e707c: 4800da15  bl       0x821f4a90
+821e7080: 7c7b1b78  mr       r27, r3
+821e7084: 3c7f0037  addis    r3, r31, 0x37
+821e7088: 3863f4c8  addi     r3, r3, -0xb38
+821e708c: 480e8aa5  bl       0x822cfb30
+821e7090: 3d400036  lis      r10, 0x36
+821e7094: 3d200036  lis      r9, 0x36
+821e7098: 3d608214  lis      r11, -0x7dec
+821e709c: 3d000012  lis      r8, 0x12
+821e70a0: 3ce00036  lis      r7, 0x36
+821e70a4: 615cf670  ori      r28, r10, 0xf670
+821e70a8: 613df684  ori      r29, r9, 0xf684
+821e70ac: 3b000000  li       r24, 0
+821e70b0: 61190418  ori      r25, r8, 0x418
+821e70b4: 60faf674  ori      r26, r7, 0xf674
+821e70b8: 2b030000  cmplwi   cr6, r3, 0
+821e70bc: 3bcb2e5c  addi     r30, r11, 0x2e5c
+821e70c0: 419a0190  beq      cr6, 0x821e7250
+821e70c4: 81630000  lwz      r11, 0(r3)
+821e70c8: 2b0b0004  cmplwi   cr6, r11, 4
+821e70cc: 41990184  bgt      cr6, 0x821e7250
+821e70d0: 7d6903a6  mtctr    r11
+821e70d4: 2f0b0000  cmpwi    cr6, r11, 0
+821e70d8: 419a00d8  beq      cr6, 0x821e71b0
+821e70dc: 424000d4  bdz      0x821e71b0
+821e70e0: 424000d0  bdz      0x821e71b0
+821e70e4: 420000cc  bdnz     0x821e71b0
+821e70e8: 7d7fd850  subf     r11, r31, r27
+821e70ec: 39400012  li       r10, 0x12
+821e70f0: 392bfbf6  addi     r9, r11, -0x40a
+821e70f4: 38810050  addi     r4, r1, 0x50
+821e70f8: 7d6953d6  divw     r11, r9, r10
+821e70fc: 390b0001  addi     r8, r11, 1
+821e7100: 550b043e  clrlwi   r11, r8, 0x10
+821e7104: 2b0bffff  cmplwi   cr6, r11, 0xffff
+821e7108: 40980060  bge      cr6, 0x821e7168
+821e710c: 556a1838  slwi     r10, r11, 3
+821e7110: 38610068  addi     r3, r1, 0x68
+821e7114: 7d6b5214  add      r11, r11, r10
+821e7118: 556b083c  slwi     r11, r11, 1
+821e711c: 7f6bfa14  add      r27, r11, r31
+821e7120: 895b0418  lbz      r10, 0x418(r27)
+821e7124: 91410050  stw      r10, 0x50(r1)
+821e7128: 4bff3e39  bl       0x821daf60
+821e712c: 8121006c  lwz      r9, 0x6c(r1)
+821e7130: 93c10068  stw      r30, 0x68(r1)
+821e7134: 38810050  addi     r4, r1, 0x50
+821e7138: 38610070  addi     r3, r1, 0x70
+821e713c: 7d3fe12e  stwx     r9, r31, r28
+821e7140: 891b0419  lbz      r8, 0x419(r27)
+821e7144: 91010050  stw      r8, 0x50(r1)
+821e7148: 4bff3e69  bl       0x821dafb0
+821e714c: 80e10074  lwz      r7, 0x74(r1)
+821e7150: 93c10070  stw      r30, 0x70(r1)
+821e7154: 7cffe92e  stwx     r7, r31, r29
+821e7158: 7d7fc8ae  lbzx     r11, r31, r25
+821e715c: 1d4b003c  mulli    r10, r11, 0x3c
+821e7160: 7d5fd32e  sthx     r10, r31, r26
+821e7164: 480000ec  b        0x821e7250
+821e7168: 39600003  li       r11, 3
+821e716c: 38610078  addi     r3, r1, 0x78
+821e7170: 91610050  stw      r11, 0x50(r1)
+821e7174: 4bff3ded  bl       0x821daf60
+821e7178: 8141007c  lwz      r10, 0x7c(r1)
+821e717c: 93c10078  stw      r30, 0x78(r1)
+821e7180: 38810050  addi     r4, r1, 0x50
+821e7184: 93010050  stw      r24, 0x50(r1)
+821e7188: 38610080  addi     r3, r1, 0x80
+821e718c: 7d5fe12e  stwx     r10, r31, r28
+821e7190: 4bff3e21  bl       0x821dafb0
+821e7194: 81210084  lwz      r9, 0x84(r1)
+821e7198: 93c10080  stw      r30, 0x80(r1)
+821e719c: 7d3fe92e  stwx     r9, r31, r29
+821e71a0: 7d7fc8ae  lbzx     r11, r31, r25
+821e71a4: 1d4b003c  mulli    r10, r11, 0x3c
+821e71a8: 7d5fd32e  sthx     r10, r31, r26
+821e71ac: 480000a4  b        0x821e7250
+821e71b0: 897b000e  lbz      r11, 0xe(r27)
+821e71b4: 38810050  addi     r4, r1, 0x50
+821e71b8: 38610088  addi     r3, r1, 0x88
+821e71bc: 91610050  stw      r11, 0x50(r1)
+821e71c0: 4bff3da1  bl       0x821daf60
+821e71c4: 80c1008c  lwz      r6, 0x8c(r1)
+821e71c8: 3d400036  lis      r10, 0x36
+821e71cc: 93c10088  stw      r30, 0x88(r1)
+821e71d0: 3d200012  lis      r9, 0x12
+821e71d4: 6148f67c  ori      r8, r10, 0xf67c
+821e71d8: 612703fc  ori      r7, r9, 0x3fc
+821e71dc: 7cdfe12e  stwx     r6, r31, r28
+821e71e0: 38810050  addi     r4, r1, 0x50
+821e71e4: 7d7fc8ae  lbzx     r11, r31, r25
+821e71e8: 38610090  addi     r3, r1, 0x90
+821e71ec: 7cbf402e  lwzx     r5, r31, r8
+821e71f0: 1d250082  mulli    r9, r5, 0x82
+821e71f4: 1d4b003c  mulli    r10, r11, 0x3c
+821e71f8: 7c1f3c2e  lfsx     f0, r31, r7
+821e71fc: 7d2807b4  extsw    r8, r9
+821e7200: 5546043e  clrlwi   r6, r10, 0x10
+821e7204: f9010050  std      r8, 0x50(r1)
+821e7208: c9a10050  lfd      f13, 0x50(r1)
+821e720c: f8c10050  std      r6, 0x50(r1)
+821e7210: c9810050  lfd      f12, 0x50(r1)
+821e7214: fd406e9c  fcfid    f10, f13
+821e7218: fd60669c  fcfid    f11, f12
+821e721c: fd005018  frsp     f8, f10
+821e7220: fd205818  frsp     f9, f11
+821e7224: ece9403a  fmadds   f7, f9, f0, f8
+821e7228: fcc03e5e  fctidz   f6, f7
+821e722c: d8c10050  stfd     f6, 0x50(r1)
+821e7230: a0a10056  lhz      r5, 0x56(r1)
+821e7234: 7cbfd32e  sthx     r5, r31, r26
+821e7238: 897b000f  lbz      r11, 0xf(r27)
+821e723c: 91610050  stw      r11, 0x50(r1)
+821e7240: 4bff3d71  bl       0x821dafb0
+821e7244: 81410094  lwz      r10, 0x94(r1)
+821e7248: 93c10090  stw      r30, 0x90(r1)
+821e724c: 7d5fe92e  stwx     r10, r31, r29
+821e7250: 3f7f0037  addis    r27, r31, 0x37
+821e7254: 3b7bf66c  addi     r27, r27, -0x994
+821e7258: 7f63db78  mr       r3, r27
+821e725c: 480e88d5  bl       0x822cfb30
+821e7260: 2b030000  cmplwi   cr6, r3, 0
+821e7264: 419a0010  beq      cr6, 0x821e7274
+821e7268: 81630000  lwz      r11, 0(r3)
+821e726c: 2f0b000a  cmpwi    cr6, r11, 0xa
+821e7270: 419a0024  beq      cr6, 0x821e7294
+821e7274: 3c7f0037  addis    r3, r31, 0x37
+821e7278: 3863f680  addi     r3, r3, -0x980
+821e727c: 480e88b5  bl       0x822cfb30
+821e7280: 2b030000  cmplwi   cr6, r3, 0
+821e7284: 419a0070  beq      cr6, 0x821e72f4
+821e7288: 81630000  lwz      r11, 0(r3)
+821e728c: 2f0b0002  cmpwi    cr6, r11, 2
+821e7290: 409a0064  bne      cr6, 0x821e72f4
+821e7294: 3d608214  lis      r11, -0x7dec
+821e7298: 9301005c  stw      r24, 0x5c(r1)
+821e729c: 38800003  li       r4, 3
+821e72a0: 394b2c44  addi     r10, r11, 0x2c44
+821e72a4: 38610058  addi     r3, r1, 0x58
+821e72a8: 91410058  stw      r10, 0x58(r1)
+821e72ac: 480e898d  bl       0x822cfc38
+821e72b0: 3d208216  lis      r9, -0x7dea
+821e72b4: 7c6b1b78  mr       r11, r3
+821e72b8: 9061005c  stw      r3, 0x5c(r1)
+821e72bc: 390907e4  addi     r8, r9, 0x7e4
+821e72c0: 93c10058  stw      r30, 0x58(r1)
+821e72c4: 93010064  stw      r24, 0x64(r1)
+821e72c8: 38800000  li       r4, 0
+821e72cc: 91010060  stw      r8, 0x60(r1)
+821e72d0: 38610060  addi     r3, r1, 0x60
+821e72d4: 7d7fe12e  stwx     r11, r31, r28
+821e72d8: 480e8961  bl       0x822cfc38
+821e72dc: 7c7fe92e  stwx     r3, r31, r29
+821e72e0: 7cffc8ae  lbzx     r7, r31, r25
+821e72e4: 1cc7003c  mulli    r6, r7, 0x3c
+821e72e8: 93c10060  stw      r30, 0x60(r1)
+821e72ec: 90610064  stw      r3, 0x64(r1)
+821e72f0: 7cdfd32e  sthx     r6, r31, r26
+821e72f4: 7f63db78  mr       r3, r27
+821e72f8: 480e8839  bl       0x822cfb30
+821e72fc: 2b030000  cmplwi   cr6, r3, 0
+821e7300: 419a000c  beq      cr6, 0x821e730c
+821e7304: 81630000  lwz      r11, 0(r3)
+821e7308: 48000008  b        0x821e7310
+821e730c: 3960ffff  li       r11, -1
+821e7310: 5564063e  clrlwi   r4, r11, 0x18
+821e7314: 7c7fd22e  lhzx     r3, r31, r26
+821e7318: 480045e1  bl       0x821eb8f8
+821e731c: 3d600036  lis      r11, 0x36
+821e7320: 616af694  ori      r10, r11, 0xf694
+821e7324: 7c7f532e  sthx     r3, r31, r10
+821e7328: 382100e0  addi     r1, r1, 0xe0
+821e732c: 487534ac  b        0x8293a7d8
+
+====================================================================================================
+S. End of a programmed session 0x821e9168: per-session "combo used" bits (@+0x36f0d6) are OR-ed into the saved bits (@+0x120420)
+====================================================================================================
+# Only when TodaySessionState <= 2. The picker (section I) skips combos whose saved OR session bit is set, so it
+# works through every combination of a (group, position, level) before repeating; 0x821e68b0 clears a set once all are used.
+
+# --- state check
+821e9168: 7d8802a6  mflr     r12
+821e916c: 4875160d  bl       0x8293a778
+821e9170: 9421ff10  stwu     r1, -0xf0(r1)
+821e9174: 7c7c1b78  mr       r28, r3
+821e9178: 3c630037  addis    r3, r3, 0x37
+821e917c: 3863f4c8  addi     r3, r3, -0xb38
+821e9180: 480e69b1  bl       0x822cfb30
+821e9184: 2b030000  cmplwi   cr6, r3, 0
+821e9188: 419a0010  beq      cr6, 0x821e9198
+821e918c: 81630000  lwz      r11, 0(r3)
+821e9190: 2f0b0002  cmpwi    cr6, r11, 2
+821e9194: 419904ec  bgt      cr6, 0x821e9680
+
+# --- merge + reset when all used
+821e9520: 7d6b5214  add      r11, r11, r10
+821e9524: 38810078  addi     r4, r1, 0x78
+821e9528: 7cebe214  add      r7, r11, r28
+821e952c: 7f83e378  mr       r3, r28
+821e9530: 7d67c8ae  lbzx     r11, r7, r25
+821e9534: 7d6a4b78  or       r10, r11, r9
+821e9538: 7d5fe1ae  stbx     r10, r31, r28
+821e953c: 8101005c  lwz      r8, 0x5c(r1)
+821e9540: 80e10064  lwz      r7, 0x64(r1)
+821e9544: 81210054  lwz      r9, 0x54(r1)
+821e9548: 9121007c  stw      r9, 0x7c(r1)
+821e954c: 90e1006c  stw      r7, 0x6c(r1)
+821e9550: 91010074  stw      r8, 0x74(r1)
+821e9554: 4bffd35d  bl       0x821e68b0
+821e9558: 5466063e  clrlwi   r6, r3, 0x18
+821e955c: 2b0600ff  cmplwi   cr6, r6, 0xff
+821e9560: 409a007c  bne      cr6, 0x821e95dc
+821e9564: 38610050  addi     r3, r1, 0x50
+821e9568: 480e65c9  bl       0x822cfb30
+821e956c: 2b030000  cmplwi   cr6, r3, 0
+821e9570: 419a000c  beq      cr6, 0x821e957c
+821e9574: 83e30000  lwz      r31, 0(r3)
+821e9578: 48000008  b        0x821e9580
+821e957c: 3be0ffff  li       r31, -1
+821e9580: 38610058  addi     r3, r1, 0x58
+821e9584: 480e65ad  bl       0x822cfb30
+821e9588: 2b030000  cmplwi   cr6, r3, 0
+821e958c: 419a000c  beq      cr6, 0x821e9598
+821e9590: 83c30000  lwz      r30, 0(r3)
+821e9594: 48000008  b        0x821e959c
+821e9598: 3bc0ffff  li       r30, -1
+821e959c: 38610060  addi     r3, r1, 0x60
+821e95a0: 480e6591  bl       0x822cfb30
+821e95a4: 2b030000  cmplwi   cr6, r3, 0
+821e95a8: 419a000c  beq      cr6, 0x821e95b4
+821e95ac: 81430000  lwz      r10, 0(r3)
+821e95b0: 48000008  b        0x821e95b8
+821e95b4: 3940ffff  li       r10, -1
+821e95b8: 57eb083c  slwi     r11, r31, 1
+821e95bc: 7d4adbd6  divw     r10, r10, r27
+821e95c0: 7d7f5a14  add      r11, r31, r11
+821e95c4: 7d6bf214  add      r11, r11, r30
+821e95c8: 7d6bd214  add      r11, r11, r26
+821e95cc: 5569083c  slwi     r9, r11, 1
+821e95d0: 7d6b4a14  add      r11, r11, r9
+821e95d4: 7d4b5214  add      r10, r11, r10
+821e95d8: 7ecae1ae  stbx     r22, r10, r28

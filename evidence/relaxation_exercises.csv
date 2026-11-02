@@ -1,130 +1,130 @@
-exercise,type,group,levels,positions,combination_groups,note
-PIL_KNEE_EXE_HARD_1_R,Pilates,Support,Pro,Floor,Support,single level
-PIL_KNEE_EXE_HARD_1_L,Pilates,Support,Pro,Floor,Support,single level
-PIL_KNEE_EXE_HARD_2_R,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_KNEE_EXE_HARD_2_L,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_KNEE_EXE_MED_1_L,Pilates,Support,Pro,Floor,Postural,single level
-PIL_KNEE_EXE_MED_1_R,Pilates,Support,Pro,Floor,Postural,single level
-PIL_KNEE_EXE_MED_2_L,Pilates,Support,Normal,Floor,Support,single level
-PIL_KNEE_EXE_MED_2_R,Pilates,Support,Normal,Floor,Support,single level
-PIL_KNEE_EXE_MED_3,Pilates,Support,Normal,Floor,Postural,single level
-PIL_KNEE_EXE_MED_4,Suppleness,Support,Pro,Floor,Postural,single level
-PIL_KNEE_STRETCH_1,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_KNEE_STRETCH_2,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_KNEE_STRETCH_3_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_KNEE_STRETCH_3_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_KNEE_STRETCH_4_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_KNEE_STRETCH_4_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_LIEDOWN_EXE_EASY_1_L,Pilates,Support,Newb|Normal,Floor,Postural,
-PIL_LIEDOWN_EXE_EASY_1_R,Pilates,Support,Newb|Normal,Floor,Postural,
-PIL_LIEDOWN_EXE_EASY_2_L,Pilates,Support,Newb|Normal,Floor,Support,
-PIL_LIEDOWN_EXE_EASY_2_R,Pilates,Support,Newb|Normal,Floor,Support,
-PIL_LIEDOWN_EXE_EASY_3_L,Pilates,Support,Newb,Floor,Support,single level
-PIL_LIEDOWN_EXE_EASY_3_R,Pilates,Support,Newb,Floor,Support,single level
-PIL_LIEDOWN_EXE_HARD_1_L,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_HARD_1_R,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_HARD_2_L,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_HARD_2_R,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_HARD_3_L,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_HARD_3_R,Pilates,Support,Normal|Pro,Floor,Support,
-PIL_LIEDOWN_EXE_MED_1_L,Pilates,Support,Newb|Normal|Pro,Floor,Postural,
-PIL_LIEDOWN_EXE_MED_1_R,Pilates,Support,Newb|Normal|Pro,Floor,Postural,
-PIL_LIEDOWN_EXE_MED_2_L,Pilates,Support,Pro,Floor,Postural,single level
-PIL_LIEDOWN_EXE_MED_2_R,Pilates,Support,Pro,Floor,Postural,single level
-PIL_LIEDOWN_EXE_MED_3_L,Pilates,Support,Pro,Floor,Support,single level
-PIL_LIEDOWN_EXE_MED_3_R,Pilates,Support,Pro,Floor,Support,single level
-PIL_LIEDOWN_STRETCH_1_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_LIEDOWN_STRETCH_1_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_LIEDOWN_STRETCH_2_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_LIEDOWN_STRETCH_2_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_LIEDOWN_STRETCH_3_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_LIEDOWN_STRETCH_3_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,
-PIL_SIT_EXE_EASY_1,Pilates,Support,Newb,Floor,Postural,single level
-PIL_SIT_EXE_EASY_2,Pilates,Support,Newb,Floor,Postural,single level
-PIL_SIT_EXE_EASY_3,Pilates,Support,Newb,Floor,Postural,single level
-PIL_SIT_EXE_EASY_4_L,Pilates,Support,Newb,Floor,Support,single level
-PIL_SIT_EXE_EASY_4_R,Pilates,Support,Newb,Floor,Support,single level
-PIL_SIT_EXE_HARD_1,Pilates,Support,Normal|Pro,Floor,Postural,
-PIL_SIT_EXE_HARD_2,Pilates,Support,Normal|Pro,Floor,Postural,
-PIL_SIT_EXE_HARD_3,Pilates,Support,Pro,Floor,Support,single level
-PIL_SIT_EXE_HARD_4,Pilates,Support,Normal|Pro,Floor,Postural,
-PIL_SIT_EXE_MED_1,Pilates,Support,Newb|Normal,Floor,Support,
-PIL_SIT_EXE_MED_2,Pilates,Support,Newb|Normal,Floor,Support,
-PIL_SIT_EXE_MED_3,Pilates,Support,Normal,Floor,Support,single level
-PIL_SIT_EXE_MED_4,Pilates,Support,Normal,Floor,Support,single level
-PIL_SIT_STRETCH_1,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_SIT_STRETCH_2,Suppleness,Support,Normal,Floor,Suppleness,single level
-PIL_SIT_STRETCH_3_L,Suppleness,Support,Newb|Normal|Pro,Floor,Suppleness,
-PIL_SIT_STRETCH_3_R,Suppleness,Support,Newb|Normal|Pro,Floor,Suppleness,
-PIL_SIT_STRETCH_4_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_SIT_STRETCH_4_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,
-PIL_STAND_FIT_BREATH_1,Breath,BreathMove,Newb,Stand,BreathMove,single level
-PIL_STAND_FIT_BREATH_2,Breath,BreathMove,Newb|Normal,Stand,BreathMove,
-PIL_STAND_FIT_BREATH_3,Breath,BreathMove,Newb|Normal,Stand,BreathMove,
-PIL_STAND_FIT_BREATH_4_L,Breath,BreathMove,Newb|Normal,Stand,BreathMove,
-PIL_STAND_FIT_BREATH_4_R,Breath,BreathMove,Newb|Normal,Stand,BreathMove,
-PIL_STAND_FIT_BREATH_5_L,Breath,BreathMove,Newb,Stand,BreathMove,single level
-PIL_STAND_FIT_BREATH_5_R,Breath,BreathMove,Newb,Stand,BreathMove,single level
-PIL_STAND_FIT_EXE_1,Pilates,Postural,Newb|Normal,Stand,Support,
-PIL_STAND_FIT_EXE_2,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Support,
-PIL_STAND_FIT_EXE_3_L,Pilates,Postural,Newb|Normal|Pro,Stand,Support,
-PIL_STAND_FIT_EXE_3_R,Pilates,Postural,Newb|Normal|Pro,Stand,Support,
-PIL_STAND_FIT_EXE_4,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Support,
-PIL_STAND_FIT_STRETCH_1_L,Suppleness,Postural,Pro,Stand,Suppleness,single level
-PIL_STAND_FIT_STRETCH_1_R,Suppleness,Postural,Pro,Stand,Suppleness,single level
-PIL_STAND_FIT_STRETCH_2_L,Suppleness,Postural,Pro,Stand,Suppleness,single level
-PIL_STAND_FIT_STRETCH_2_R,Suppleness,Postural,Pro,Stand,Suppleness,single level
-PIL_STAND_FIT_STRETCH_3,Suppleness,Postural,Newb|Normal,Stand,Suppleness,
-PIL_STAND_FIT_STRETCH_4_L,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,
-PIL_STAND_FIT_STRETCH_4_R,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,
-PIL_STAND_NOMOVE_BREATH_1,Breath,BreathNoMove,,,,breathing intro only (counted as Breath)
-PIL_STAND_NOMOVE_BREATH_2,Breath,BreathNoMove,,,,breathing intro only (counted as Breath)
-PIL_STAND_PF_EXE_1_L,Pilates,Postural,Newb|Normal,Stand,Postural,
-PIL_STAND_PF_EXE_1_R,Pilates,Postural,Newb|Normal,Stand,Postural,
-PIL_STAND_PF_EXE_2_L,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PF_EXE_2_R,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PF_EXE_3_L,Pilates,Postural,Normal|Pro,Stand,Support,
-PIL_STAND_PF_EXE_3_R,Pilates,Postural,Normal|Pro,Stand,Support,
-PIL_STAND_PF_EXE_4_L,Pilates,Postural,Normal|Pro,Stand,Support,
-PIL_STAND_PF_EXE_4_R,Pilates,Postural,Normal|Pro,Stand,Support,
-PIL_STAND_PF_STRETCH_1_L,Suppleness,Postural,Normal|Pro,Stand,Suppleness,
-PIL_STAND_PF_STRETCH_1_R,Suppleness,Postural,Normal|Pro,Stand,Suppleness,
-PIL_STAND_PF_STRETCH_2_L,Suppleness,Postural,Normal,Stand,Suppleness,single level
-PIL_STAND_PF_STRETCH_2_R,Suppleness,Postural,Normal,Stand,Suppleness,single level
-PIL_STAND_PF_STRETCH_3_L,Suppleness,Postural,Newb,Stand,Suppleness,single level
-PIL_STAND_PF_STRETCH_3_R,Suppleness,Postural,Newb,Stand,Suppleness,single level
-PIL_STAND_PF_STRETCH_4_L,Suppleness,Postural,Newb,Stand,Suppleness,single level
-PIL_STAND_PF_STRETCH_4_R,Suppleness,Postural,Newb,Stand,Suppleness,single level
-PIL_STAND_PJ_BREATH_1,Breath,BreathMove,Pro,Stand,BreathMove,single level
-PIL_STAND_PJ_BREATH_2,Breath,BreathMove,Pro,Stand,BreathMove,single level
-PIL_STAND_PJ_BREATH_3,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PJ_BREATH_4,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PJ_BREATH_5_L,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PJ_BREATH_5_R,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PJ_EXE_1,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PJ_EXE_2,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PJ_EXE_3,Pilates,Postural,Newb,Stand,Postural,single level
-PIL_STAND_PJ_EXE_4,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PJ_STRETCH_1,Suppleness,Postural,Newb|Normal,Stand,Suppleness,
-PIL_STAND_PJ_STRETCH_2,Suppleness,Postural,Newb|Normal,Stand,Suppleness,
-PIL_STAND_PJ_STRETCH_3_L,Suppleness,Postural,Normal|Pro,Stand,Suppleness,
-PIL_STAND_PJ_STRETCH_3_R,Suppleness,Postural,Normal|Pro,Stand,Suppleness,
-PIL_STAND_PJ_STRETCH_4,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,
-PIL_STAND_PO_BREATH_1,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_BREATH_2,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_BREATH_3,Breath,BreathMove,Normal,Stand,BreathMove,single level
-PIL_STAND_PO_BREATH_4,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_BREATH_5,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_BREATH_6_L,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_BREATH_6_R,Breath,BreathMove,Normal|Pro,Stand,BreathMove,
-PIL_STAND_PO_EXE_1,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Postural,
-PIL_STAND_PO_EXE_2,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,
-PIL_STAND_PO_EXE_3,Pilates,Postural,Newb|Normal,Stand,Support,
-PIL_STAND_PO_EXE_4,Pilates,Postural,Newb|Normal,Stand,Support,
-PIL_STAND_PO_STRETCH_1_L,Suppleness,Postural,Newb|Normal,Stand,Suppleness,
-PIL_STAND_PO_STRETCH_1_R,Suppleness,Postural,Newb|Normal,Stand,Suppleness,
-PIL_STAND_PO_STRETCH_2_L,Suppleness,Postural,Normal,Stand,Suppleness,single level
-PIL_STAND_PO_STRETCH_2_R,Suppleness,Postural,Normal,Stand,Suppleness,single level
-PIL_STAND_PO_STRETCH_3,Suppleness,Postural,Normal|Pro,Stand,Suppleness,
-PIL_STAND_PO_STRETCH_4_L,Suppleness,Postural,Normal,Stand,Suppleness,single level
-PIL_STAND_PO_STRETCH_4_R,Suppleness,Postural,Normal,Stand,Suppleness,single level
+exercise,type,group,levels,positions,combination_groups,relaxation_session,goals,slider_settings,note
+PIL_KNEE_EXE_HARD_1_R,Pilates,Support,Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_KNEE_EXE_HARD_1_L,Pilates,Support,Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_KNEE_EXE_HARD_2_R,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_KNEE_EXE_HARD_2_L,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_KNEE_EXE_MED_1_L,Pilates,Support,Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_KNEE_EXE_MED_1_R,Pilates,Support,Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_KNEE_EXE_MED_2_L,Pilates,Support,Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm,single level
+PIL_KNEE_EXE_MED_2_R,Pilates,Support,Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm,single level
+PIL_KNEE_EXE_MED_3,Pilates,Support,Normal,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm,single level
+PIL_KNEE_EXE_MED_4,Suppleness,Support,Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_KNEE_STRETCH_1,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_KNEE_STRETCH_2,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_KNEE_STRETCH_3_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_KNEE_STRETCH_3_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_KNEE_STRETCH_4_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_KNEE_STRETCH_4_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_EXE_EASY_1_L,Pilates,Support,Newb|Normal,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_EXE_EASY_1_R,Pilates,Support,Newb|Normal,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_EXE_EASY_2_L,Pilates,Support,Newb|Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_EXE_EASY_2_R,Pilates,Support,Newb|Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_EXE_EASY_3_L,Pilates,Support,Newb,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_LIEDOWN_EXE_EASY_3_R,Pilates,Support,Newb,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_LIEDOWN_EXE_HARD_1_L,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_HARD_1_R,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_HARD_2_L,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_HARD_2_R,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_HARD_3_L,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_HARD_3_R,Pilates,Support,Normal|Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_MED_1_L,Pilates,Support,Newb|Normal|Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_MED_1_R,Pilates,Support,Newb|Normal|Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_EXE_MED_2_L,Pilates,Support,Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_LIEDOWN_EXE_MED_2_R,Pilates,Support,Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_LIEDOWN_EXE_MED_3_L,Pilates,Support,Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_LIEDOWN_EXE_MED_3_R,Pilates,Support,Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_LIEDOWN_STRETCH_1_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_STRETCH_1_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_LIEDOWN_STRETCH_2_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_STRETCH_2_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_STRETCH_3_L,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_LIEDOWN_STRETCH_3_R,Suppleness,Support,Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_EXE_EASY_1,Pilates,Support,Newb,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_SIT_EXE_EASY_2,Pilates,Support,Newb,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_SIT_EXE_EASY_3,Pilates,Support,Newb,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_SIT_EXE_EASY_4_L,Pilates,Support,Newb,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_SIT_EXE_EASY_4_R,Pilates,Support,Newb,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_SIT_EXE_HARD_1,Pilates,Support,Normal|Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_EXE_HARD_2,Pilates,Support,Normal|Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_EXE_HARD_3,Pilates,Support,Pro,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Fairly calm|Serene,single level
+PIL_SIT_EXE_HARD_4,Pilates,Support,Normal|Pro,Floor,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_EXE_MED_1,Pilates,Support,Newb|Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_SIT_EXE_MED_2,Pilates,Support,Newb|Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_SIT_EXE_MED_3,Pilates,Support,Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm,single level
+PIL_SIT_EXE_MED_4,Pilates,Support,Normal,Floor,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm,single level
+PIL_SIT_STRETCH_1,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_SIT_STRETCH_2,Suppleness,Support,Normal,Floor,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_SIT_STRETCH_3_L,Suppleness,Support,Newb|Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_STRETCH_3_R,Suppleness,Support,Newb|Normal|Pro,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_SIT_STRETCH_4_R,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_SIT_STRETCH_4_L,Suppleness,Support,Newb|Normal,Floor,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_BREATH_1,Breath,BreathMove,Newb,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated,single level
+PIL_STAND_FIT_BREATH_2,Breath,BreathMove,Newb|Normal,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_BREATH_3,Breath,BreathMove,Newb|Normal,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_BREATH_4_L,Breath,BreathMove,Newb|Normal,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_BREATH_4_R,Breath,BreathMove,Newb|Normal,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_BREATH_5_L,Breath,BreathMove,Newb,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated,single level
+PIL_STAND_FIT_BREATH_5_R,Breath,BreathMove,Newb,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated,single level
+PIL_STAND_FIT_EXE_1,Pilates,Postural,Newb|Normal,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_EXE_2,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_FIT_EXE_3_L,Pilates,Postural,Newb|Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_FIT_EXE_3_R,Pilates,Postural,Newb|Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_FIT_EXE_4,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_FIT_STRETCH_1_L,Suppleness,Postural,Pro,Stand,Suppleness,Suppleness,Lose weight,Fairly calm|Serene,single level
+PIL_STAND_FIT_STRETCH_1_R,Suppleness,Postural,Pro,Stand,Suppleness,Suppleness,Lose weight,Fairly calm|Serene,single level
+PIL_STAND_FIT_STRETCH_2_L,Suppleness,Postural,Pro,Stand,Suppleness,Suppleness,Lose weight,Fairly calm|Serene,single level
+PIL_STAND_FIT_STRETCH_2_R,Suppleness,Postural,Pro,Stand,Suppleness,Suppleness,Lose weight,Fairly calm|Serene,single level
+PIL_STAND_FIT_STRETCH_3,Suppleness,Postural,Newb|Normal,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_FIT_STRETCH_4_L,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_FIT_STRETCH_4_R,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_NOMOVE_BREATH_1,Breath,BreathNoMove,,,,any (breathing intro),any,any,breathing intro only (counted as Breath)
+PIL_STAND_NOMOVE_BREATH_2,Breath,BreathNoMove,,,,any (breathing intro),any,any,breathing intro only (counted as Breath)
+PIL_STAND_PF_EXE_1_L,Pilates,Postural,Newb|Normal,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PF_EXE_1_R,Pilates,Postural,Newb|Normal,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PF_EXE_2_L,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_EXE_2_R,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_EXE_3_L,Pilates,Postural,Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_EXE_3_R,Pilates,Postural,Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_EXE_4_L,Pilates,Postural,Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_EXE_4_R,Pilates,Postural,Normal|Pro,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_STRETCH_1_L,Suppleness,Postural,Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_STRETCH_1_R,Suppleness,Postural,Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PF_STRETCH_2_L,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PF_STRETCH_2_R,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PF_STRETCH_3_L,Suppleness,Postural,Newb,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated,single level
+PIL_STAND_PF_STRETCH_3_R,Suppleness,Postural,Newb,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated,single level
+PIL_STAND_PF_STRETCH_4_L,Suppleness,Postural,Newb,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated,single level
+PIL_STAND_PF_STRETCH_4_R,Suppleness,Postural,Newb,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated,single level
+PIL_STAND_PJ_BREATH_1,Breath,BreathMove,Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Fairly calm|Serene,single level
+PIL_STAND_PJ_BREATH_2,Breath,BreathMove,Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Fairly calm|Serene,single level
+PIL_STAND_PJ_BREATH_3,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_BREATH_4,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_BREATH_5_L,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_BREATH_5_R,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_EXE_1,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_EXE_2,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_EXE_3,Pilates,Postural,Newb,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated,single level
+PIL_STAND_PJ_EXE_4,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_STRETCH_1,Suppleness,Postural,Newb|Normal,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PJ_STRETCH_2,Suppleness,Postural,Newb|Normal,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PJ_STRETCH_3_L,Suppleness,Postural,Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_STRETCH_3_R,Suppleness,Postural,Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PJ_STRETCH_4,Suppleness,Postural,Newb|Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_1,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_2,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_3,Breath,BreathMove,Normal,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PO_BREATH_4,Breath,BreathMove,Newb|Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_5,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_6_L,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_BREATH_6_R,Breath,BreathMove,Normal|Pro,Stand,BreathMove,Breath,Peace and calm|An active and balanced life,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_EXE_1,Pilates,Postural,Newb|Normal|Pro,Floor|Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_EXE_2,Pilates,Postural,Newb|Normal|Pro,Stand,Postural,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_EXE_3,Pilates,Postural,Newb|Normal,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PO_EXE_4,Pilates,Postural,Newb|Normal,Stand,Support,Pilates,Lose weight|Peace and calm|An active and balanced life|Tone your look,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PO_STRETCH_1_L,Suppleness,Postural,Newb|Normal,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PO_STRETCH_1_R,Suppleness,Postural,Newb|Normal,Stand,Suppleness,Suppleness,Lose weight,Anguished|Agitated|Worried|Fairly calm,
+PIL_STAND_PO_STRETCH_2_L,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PO_STRETCH_2_R,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PO_STRETCH_3,Suppleness,Postural,Normal|Pro,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm|Serene,
+PIL_STAND_PO_STRETCH_4_L,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
+PIL_STAND_PO_STRETCH_4_R,Suppleness,Postural,Normal,Stand,Suppleness,Suppleness,Lose weight,Agitated|Worried|Fairly calm,single level
